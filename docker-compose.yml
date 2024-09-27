@@ -1,0 +1,47 @@
+services:
+  webapi:
+    image: ${DOCKER_REGISTRY-}webapi
+    build:
+      context: .
+      dockerfile: Apps/WebAPI/Dockerfile
+    depends_on:
+        - postgres
+    environment:
+        - ConnectionString=Host=postgres;Database=postgres;Username=postgres;Password=root;Include Error Detail=true
+        - ASPNETCORE_ENVIRONMENT=Development
+        - ASPNETCORE_URLS=https://+:443;http://+:80
+    ports:
+      - "80"
+      - "443"
+  postgres:
+    image: "postgres"
+    container_name: postgres-dev
+    environment:
+        - POSTGRES_PASSWORD=root
+    ports:
+        - "5432:5432"
+    volumes:
+        - postgres_data:/var/lib/postgresql/data
+  pgadmin:
+    image: "dpage/pgadmin4:latest"
+    environment:
+        - PGADMIN_DEFAULT_EMAIL=admin@nonexistent.environment
+        - PGADMIN_DEFAULT_PASSWORD=SuperSecret
+    ports:
+        - "8080:80"
+  apigw:
+    image: ${DOCKER_REGISTRY-}apigw
+    build:
+      context: .
+      dockerfile: BuildingBlocks/ApiGateway/Dockerfile
+    environment:
+    - ASPNETCORE_ENVIRONMENT=Development
+    - ASPNETCORE_URLS=https://+:443;http://+:80
+    depends_on:
+    - webapi
+    ports:
+    - "5000:80"
+    - "5001:443"
+volumes:
+  postgres_data:
+  
