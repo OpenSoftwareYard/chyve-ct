@@ -15,6 +15,9 @@
       "AuthenticationOptions": {
         "AuthenticationProviderKey": "chyve-key",
         "AllowedScopes": []
+      },
+      "AddHeadersToRequest": {
+          "UserId": "Claims[sub] > value[0] > @"
       }
     }
   ],

@@ -24,9 +24,8 @@ builder.Services.AddAuthentication(options =>
 {
     options.Authority = "https://chyve-dev.eu.auth0.com/";
     options.Audience = "https://chyve-ct.opensoftwareyard.com";
+    options.MapInboundClaims = false;
 });
-
-JwtSecurityTokenHandler.DefaultInboundClaimTypeMap.Clear();
 
 builder.Services.AddOcelot();
 builder.Services.AddSwaggerForOcelot(builder.Configuration);
