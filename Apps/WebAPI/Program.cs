@@ -40,6 +40,8 @@ builder.Services.AddDbContext<ChyveContext>(options =>
     options.UseNpgsql(builder.Configuration["ConnectionString"] ?? "Host=localhost;Database=postgres;Username=postgres;Password=root;Include Error Detail=true")
 );
 
+builder.Services.AddScoped<ZoneRepository>();
+
 builder.Services.AddHealthChecks();
 
 var app = builder.Build();
