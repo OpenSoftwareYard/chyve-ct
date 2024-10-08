@@ -12,7 +12,10 @@ public class Zone : BaseEntity
     public required string IPType { get; set; }
     public required string VNic { get; set; }
     public required IPAddress InternalIPAddress { get; set; }
-    public required string UserId { get; set; }
 
+    public required int OrganizationId { get; set; }
+    public required Organization Organization { get; set; }
+
+    public required int NodeId { get; set; }
     public required Node Node { get; set; }
 }

@@ -8,8 +8,18 @@ public class ZoneRepository(ChyveContext context)
 {
     private readonly ChyveContext _context = context;
 
-    public async Task<IReadOnlyCollection<ZoneDTO>> GetZones(string userId)
+    public async Task<IReadOnlyCollection<ZoneDTO>?> GetZones(string userId)
     {
-        return await _context.Zones.Where(z => z.UserId == userId).Select(z => ZoneDTO.FromZone(z)).ToListAsync();
+        var organizations = await _context.Organizations.Where(o => o.UserIds.Contains(userId)).ToListAsync();
+
+        if (organizations.Count == 0)
+        {
+            return null;
+        }
+
+        return await _context.Zones
+            .Where(z => organizations.Contains(z.Organization))
+            .Select(z => ZoneDTO.FromZone(z))
+            .ToListAsync();
     }
 }

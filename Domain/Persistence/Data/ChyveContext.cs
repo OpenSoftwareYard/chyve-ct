@@ -7,6 +7,7 @@ namespace Persistence.Data;
 
 public class ChyveContext : DbContext
 {
+    public virtual DbSet<Organization> Organizations { get; set; }
     public virtual DbSet<Node> Nodes { get; set; }
     public virtual DbSet<Zone> Zones { get; set; }
 
