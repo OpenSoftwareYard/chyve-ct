@@ -1,6 +1,8 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Persistence.Data;
+using Persistence.DTOs;
+using Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -40,7 +42,10 @@ builder.Services.AddDbContext<ChyveContext>(options =>
     options.UseNpgsql(builder.Configuration["ConnectionString"] ?? "Host=localhost;Database=postgres;Username=postgres;Password=root;Include Error Detail=true")
 );
 
-builder.Services.AddScoped<ZoneRepository>();
+builder.Services.AddAutoMapper(typeof(MappingProfile));
+
+builder.Services.AddScoped<IZoneRepository, ZoneRepository>();
+builder.Services.AddScoped<IZoneService, ZoneService>();
 
 builder.Services.AddHealthChecks();
 

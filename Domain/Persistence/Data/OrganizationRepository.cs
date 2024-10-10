@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Persistence.Data
 {
-    public  class OrganizationRepository(ChyveContext context)
+    public class OrganizationRepository(ChyveContext context)
     {
         private readonly ChyveContext _context = context;
     }

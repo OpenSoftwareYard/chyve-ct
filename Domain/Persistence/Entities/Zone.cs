@@ -13,6 +13,10 @@ public class Zone : BaseEntity
     public required string VNic { get; set; }
     public required IPAddress InternalIPAddress { get; set; }
 
+    public int CpuCount { get; set; }
+    public int RamGB { get; set; }
+    public int DiskGB { get; set; }
+
     public required int OrganizationId { get; set; }
     public required Organization Organization { get; set; }
 

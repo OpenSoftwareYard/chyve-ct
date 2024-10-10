@@ -3,15 +3,12 @@ using Persistence.Entities;
 
 namespace Persistence.DTOs;
 
-public record ZoneDTO
+public record class ZoneDTO
 {
-    public Guid Id { get; set; }
-
-    public static ZoneDTO FromZone(Zone zone)
-    {
-        return new ZoneDTO
-        {
-            Id = zone.ZoneId
-        };
-    }
+    public Guid ZoneId { get; set; }
+    public required string Name { get; set; }
+    public int CpuCount { get; set; }
+    public int RamGB { get; set; }
+    public int DiskGB { get; set; }
+    public int NodeId { get; set; }
 }

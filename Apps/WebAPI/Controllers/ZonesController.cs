@@ -1,14 +1,14 @@
 using Microsoft.AspNetCore.Mvc;
-using Persistence.Data;
 using Persistence.DTOs;
+using Services;
 
 namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ZonesController(ZoneRepository zoneRepository) : ControllerBase
+    public class ZonesController(IZoneService zoneService) : ControllerBase
     {
-        private readonly ZoneRepository _zoneRepository = zoneRepository;
+        private readonly IZoneService _zoneService = zoneService;
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ZoneDTO>>> GetZones()
@@ -18,7 +18,7 @@ namespace WebAPI.Controllers
                 return Unauthorized();
             }
 
-            var zones = await _zoneRepository.GetZones(userId!);
+            var zones = await _zoneService.GetZonesForUserId(userId!);
 
             if (zones == null)
             {

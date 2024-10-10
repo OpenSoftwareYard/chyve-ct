@@ -12,5 +12,14 @@ public class Node : BaseEntity
     public required IPAddress DefRouter { get; set; }
     public IPNetwork PrivateZoneNetwork { get; set; }
 
+    public int TotalCpu { get; set; }
+    public int UsedCpu { get; set; }
+
+    public int TotalRamGB { get; set; }
+    public int UsedRamGB { get; set; }
+
+    public int TotalDiskGB { get; set; }
+    public int UsedDiskGB { get; set; }
+
     public required List<Zone> Zones { get; set; }
 }

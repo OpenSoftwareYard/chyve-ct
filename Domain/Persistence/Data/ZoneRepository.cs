@@ -1,14 +1,12 @@
 using System;
 using Microsoft.EntityFrameworkCore;
-using Persistence.DTOs;
+using Persistence.Entities;
 
 namespace Persistence.Data;
 
-public class ZoneRepository(ChyveContext context)
+public class ZoneRepository(ChyveContext context) : GenericRepository<Zone>(context), IZoneRepository
 {
-    private readonly ChyveContext _context = context;
-
-    public async Task<IReadOnlyCollection<ZoneDTO>?> GetZones(string userId)
+    public async Task<IEnumerable<Zone>?> GetForUserId(string userId)
     {
         var organizations = await _context.Organizations.Where(o => o.UserIds.Contains(userId)).ToListAsync();
 
@@ -18,8 +16,7 @@ public class ZoneRepository(ChyveContext context)
         }
 
         return await _context.Zones
-            .Where(z => organizations.Contains(z.Organization))
-            .Select(z => ZoneDTO.FromZone(z))
-            .ToListAsync();
+          .Where(z => organizations.Contains(z.Organization))
+          .ToListAsync();
     }
 }
