@@ -10,6 +10,7 @@
     <DockerServiceName>apigw</DockerServiceName>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="docker-compose.mac.yml" />
     <None Include="docker-compose.yml" />
     <None Include=".dockerignore" />
   </ItemGroup>
