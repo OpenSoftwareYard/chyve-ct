@@ -1,6 +1,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using EventBus;
+using Events;
+using Scheduler.EventHandlers;
 
 namespace Scheduler;
 
@@ -11,12 +13,11 @@ public class Worker(ILogger<Worker> logger, IEventBus eventBus) : BackgroundServ
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
+        _eventBus.Subscribe<PlaceZoneIntegrationEvent, PlaceZoneIntegrationEventHandler>();
+
         while (!stoppingToken.IsCancellationRequested)
         {
-            if (_logger.IsEnabled(LogLevel.Information))
-            {
-                _logger.LogInformation("Worker running at: {time}", DateTimeOffset.Now);
-            }
             await Task.Delay(1000, stoppingToken);
         }
     }
