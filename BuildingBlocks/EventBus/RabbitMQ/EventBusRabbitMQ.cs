@@ -32,9 +32,10 @@ public class EventBusRabbitMQ : IEventBus, IDisposable
         _retryCount = retryCount;
         _queueName = queueName;
         _consumerChannel = CreateConsumerChannel();
+        _subsManager.OnEventRemoved += SubsManager_OnEventRemoved;
     }
 
-    private void SubsManager_OnEventRemoved(object sender, string eventName)
+    private void SubsManager_OnEventRemoved(object? sender, string eventName)
     {
         if (!_persistentConnection.IsConnected)
         {
@@ -128,11 +129,10 @@ public class EventBusRabbitMQ : IEventBus, IDisposable
 
     public void Dispose()
     {
-        if (_consumerChannel != null)
-        {
-            _consumerChannel.Dispose();
-        }
+        _consumerChannel?.Dispose();
         _subsManager.Clear();
+
+        GC.SuppressFinalize(this);
     }
 
     public void StartBasicConsume()

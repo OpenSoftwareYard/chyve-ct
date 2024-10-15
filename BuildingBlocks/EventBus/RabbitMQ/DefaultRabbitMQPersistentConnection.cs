@@ -1,4 +1,3 @@
-using System;
 using System.Net.Sockets;
 using Microsoft.Extensions.Logging;
 using Polly;
@@ -51,6 +50,8 @@ public class DefaultRabbitMQPersistentConnection(IConnectionFactory connectionFa
         {
             _logger.LogCritical(ex, "Failed to dispose");
         }
+
+        GC.SuppressFinalize(this);
     }
 
     public bool TryConnect()
