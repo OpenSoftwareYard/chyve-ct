@@ -6,13 +6,40 @@ services:
       dockerfile: Apps/WebAPI/Dockerfile
     depends_on:
         - postgres
+        - rabbitmq
     environment:
         - ConnectionString=Host=postgres;Database=postgres;Username=postgres;Password=root;Include Error Detail=true
         - ASPNETCORE_ENVIRONMENT=Development
         - ASPNETCORE_URLS=https://+:443;http://+:80
+        - EventBusConnection=rabbitmq
     ports:
       - "80"
       - "443"
+  scheduler:
+    image: ${DOCKER_REGISTRY-}scheduler
+    build:
+      context: .
+      dockerfile: Apps/Scheduler/Dockerfile
+    depends_on:
+        - postgres
+        - rabbitmq
+    environment:
+        - ConnectionString=Host=postgres;Database=postgres;Username=postgres;Password=root;Include Error Detail=true
+        - ASPNETCORE_ENVIRONMENT=Development
+        - EventBusConnection=rabbitmq
+  apigw:
+    image: ${DOCKER_REGISTRY-}apigw
+    build:
+      context: .
+      dockerfile: BuildingBlocks/ApiGateway/Dockerfile
+    environment:
+        - ASPNETCORE_ENVIRONMENT=Development
+        - ASPNETCORE_URLS=https://+:443;http://+:80
+    depends_on:
+    - webapi
+    ports:
+    - "5000:80"
+    - "5001:443"
   postgres:
     image: "postgres"
     container_name: postgres-dev
@@ -29,19 +56,13 @@ services:
         - PGADMIN_DEFAULT_PASSWORD=SuperSecret
     ports:
         - "8080:80"
-  apigw:
-    image: ${DOCKER_REGISTRY-}apigw
-    build:
-      context: .
-      dockerfile: BuildingBlocks/ApiGateway/Dockerfile
-    environment:
-        - ASPNETCORE_ENVIRONMENT=Development
-        - ASPNETCORE_URLS=https://+:443;http://+:80
-    depends_on:
-    - webapi
+  rabbitmq:
+    image: "rabbitmq:3-management-alpine"
+    container_name: rabbitmq
+    restart: always
     ports:
-    - "5000:80"
-    - "5001:443"
+    - "5672:5672"
+    - "15672:15672"
 volumes:
   postgres_data:
   
