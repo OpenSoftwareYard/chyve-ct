@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\BuildingBlocks\EventBus\EventBus.csproj" />
+    <ProjectReference Include="..\Persistence\Persistence.csproj" />
   </ItemGroup>
 
   <PropertyGroup>

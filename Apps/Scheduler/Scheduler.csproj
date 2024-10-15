@@ -25,5 +25,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\BuildingBlocks\EventBus\EventBus.csproj" />
     <ProjectReference Include="..\..\Domain\Events\Events.csproj" />
+    <ProjectReference Include="..\..\Domain\Services\Services.csproj" />
   </ItemGroup>
 </Project>
