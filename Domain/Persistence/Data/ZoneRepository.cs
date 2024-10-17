@@ -19,4 +19,24 @@ public class ZoneRepository(ChyveContext context) : GenericRepository<Zone>(cont
           .Where(z => organizations.Contains(z.Organization))
           .ToListAsync();
     }
+
+    public async Task<Zone?> AddForUserId(Zone zone, string userId)
+    {
+        var organizations = await _context.Organizations.Where(o => o.UserIds.Contains(userId)).ToListAsync();
+
+        Console.WriteLine("Using userId {0}", userId);
+        Console.WriteLine("Got organizations {0}", organizations[0]);
+
+        if (organizations.Count == 0)
+        {
+            return null;
+        }
+
+        zone.Organization = organizations.First();
+        zone.OrganizationId = zone.Organization.Id;
+
+        Console.WriteLine("Using final zone {0}", zone);
+
+        return await Add(zone);
+    }
 }

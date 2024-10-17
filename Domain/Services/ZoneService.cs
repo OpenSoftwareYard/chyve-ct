@@ -15,4 +15,11 @@ public class ZoneService(IZoneRepository repository, IMapper mapper) : GenericSe
         var zones = await _zoneRepository.GetForUserId(userId);
         return _mapper.Map<IEnumerable<ZoneDTO>>(zones);
     }
+
+    public async Task<ZoneDTO?> CreateForUserId(ZoneDTO zone, string userId)
+    {
+        var zoneToAdd = _mapper.Map<Zone>(zone);
+        var addedZone = await _zoneRepository.AddForUserId(zoneToAdd, userId);
+        return _mapper.Map<ZoneDTO>(addedZone);
+    }
 }

@@ -6,60 +6,31 @@ using Services;
 
 namespace Scheduler.EventHandlers;
 
-public class PlaceZoneIntegrationEventHandler(ILogger<PlaceZoneIntegrationEventHandler> logger, INodeService nodeService) : IIntegrationEventHandler<PlaceZoneIntegrationEvent>
+public class PlaceZoneIntegrationEventHandler(ILogger<PlaceZoneIntegrationEventHandler> logger, INodeService nodeService, IZoneService zoneService) : IIntegrationEventHandler<PlaceZoneIntegrationEvent>
 {
     private readonly ILogger<PlaceZoneIntegrationEventHandler> _logger = logger;
     private readonly INodeService _nodeService = nodeService;
 
+    private readonly IZoneService _zoneService = zoneService;
+
     public async Task Handle(PlaceZoneIntegrationEvent @event)
     {
-        _logger.LogInformation("Handling scheduling event for zone {zoneId}", @event.Zone.ZoneId);
-        var nodes = await _nodeService.GetAll();
-        if (nodes == null)
-        {
-            _logger.LogWarning("No nodes configured to schedule zones");
-            return;
-        }
-        var selectedNode = nodes
-            .Where(node => FilterNode(node, @event.Zone))
-            .Select(node => new ScoredNode(node, ScoreNode(node, @event.Zone)))
-            .OrderByDescending(sn => sn.Score)
-            .Select(sn => sn.Node)
-            .FirstOrDefault();
+        _logger.LogInformation("Handling scheduling event for zone {zoneId}", @event.Zone.Id);
 
-        if (selectedNode == null)
+        try
         {
-            _logger.LogCritical("Failed to schedule zone {zoneId}", @event.Zone.ZoneId);
-            return;
-        }
+            var selectedNode = await _nodeService.AllocateZoneToOptimalNode(@event.Zone);
+            _logger.LogInformation("Selected node {nodeId} for zone {zoneId}", selectedNode.Id, @event.Zone.Id);
 
-        _logger.LogInformation("Selected node {nodeId} for zone {zoneId}", selectedNode.NodeId, @event.Zone.ZoneId);
+            @event.Zone.NodeId = selectedNode.Id;
+            await _zoneService.Update(@event.Zone.Id, @event.Zone);
+        }
+        catch (Exception e)
+        {
+            _logger.LogCritical("Failed to allocate zone to node {ex}", e);
+            throw;
+        }
 
         await Task.CompletedTask;
-    }
-
-    private static bool FilterNode(NodeDTO node, ZoneDTO zone)
-    {
-        return node.TotalCpu - node.UsedCpu >= zone.CpuCount &&
-            node.TotalRamGB - node.UsedRamGB >= zone.RamGB &&
-            node.TotalDiskGB - node.UsedDiskGB >= zone.DiskGB;
-    }
-
-    private static double ScoreNode(NodeDTO node, ZoneDTO zone)
-    {
-        return (node.TotalCpu - node.UsedCpu) / (double)zone.CpuCount +
-                (node.TotalRamGB - node.UsedRamGB) / (double)zone.RamGB +
-                (node.TotalDiskGB - node.UsedDiskGB) / (double)zone.DiskGB;
-    }
-
-    private static NodeDTO SelectNode(IEnumerable<ScoredNode> scoredNodes)
-    {
-        return scoredNodes.First().Node;
-    }
-
-    private record ScoredNode(NodeDTO Node, double Score)
-    {
-        public readonly NodeDTO Node = Node;
-        public readonly double Score = Score;
     }
 }

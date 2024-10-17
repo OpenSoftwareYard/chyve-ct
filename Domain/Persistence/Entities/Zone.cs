@@ -5,21 +5,20 @@ namespace Persistence.Entities;
 
 public class Zone : BaseEntity
 {
-    public Guid ZoneId { get; set; }
     public required string Name { get; set; }
-    public required string Path { get; set; }
+    public string? Path { get; set; }
     public required string Brand { get; set; }
-    public required string IPType { get; set; }
-    public required string VNic { get; set; }
-    public required IPAddress InternalIPAddress { get; set; }
+    public string? IPType { get; set; }
+    public string? VNic { get; set; }
+    public IPAddress? InternalIPAddress { get; set; }
 
     public int CpuCount { get; set; }
     public int RamGB { get; set; }
     public int DiskGB { get; set; }
 
-    public required int OrganizationId { get; set; }
+    public required Guid OrganizationId { get; set; }
     public required Organization Organization { get; set; }
 
-    public required int NodeId { get; set; }
-    public required Node Node { get; set; }
+    public Guid? NodeId { get; set; }
+    public Node? Node { get; set; }
 }

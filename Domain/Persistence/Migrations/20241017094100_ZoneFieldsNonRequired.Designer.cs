@@ -14,8 +14,8 @@ using Persistence.Data;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(ChyveContext))]
-    [Migration("20241010195649_AddCapacityAndUsage")]
-    partial class AddCapacityAndUsage
+    [Migration("20241017094100_ZoneFieldsNonRequired")]
+    partial class ZoneFieldsNonRequired
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -32,11 +32,9 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Persistence.Entities.Node", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseHiLo(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<string>("AccessToken")
                         .IsRequired()
@@ -49,9 +47,6 @@ namespace Persistence.Migrations
                     b.Property<string>("ExternalNetworkDevice")
                         .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<Guid>("NodeId")
-                        .HasColumnType("uuid");
 
                     b.Property<string>("PrivateZoneNetwork")
                         .IsRequired()
@@ -86,11 +81,9 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Persistence.Entities.Organization", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseHiLo(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -107,11 +100,9 @@ namespace Persistence.Migrations
 
             modelBuilder.Entity("Persistence.Entities.Zone", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseHiLo(b.Property<int>("Id"));
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Brand")
                         .IsRequired()
@@ -124,36 +115,29 @@ namespace Persistence.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("IPType")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<IPAddress>("InternalIPAddress")
-                        .IsRequired()
                         .HasColumnType("inet");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("NodeId")
-                        .HasColumnType("integer");
+                    b.Property<Guid?>("NodeId")
+                        .HasColumnType("uuid");
 
-                    b.Property<int>("OrganizationId")
-                        .HasColumnType("integer");
+                    b.Property<Guid>("OrganizationId")
+                        .HasColumnType("uuid");
 
                     b.Property<string>("Path")
-                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("RamGB")
                         .HasColumnType("integer");
 
                     b.Property<string>("VNic")
-                        .IsRequired()
                         .HasColumnType("text");
-
-                    b.Property<Guid>("ZoneId")
-                        .HasColumnType("uuid");
 
                     b.HasKey("Id");
 
@@ -168,9 +152,7 @@ namespace Persistence.Migrations
                 {
                     b.HasOne("Persistence.Entities.Node", "Node")
                         .WithMany("Zones")
-                        .HasForeignKey("NodeId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("NodeId");
 
                     b.HasOne("Persistence.Entities.Organization", "Organization")
                         .WithMany("Zones")

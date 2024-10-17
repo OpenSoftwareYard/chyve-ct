@@ -9,10 +9,22 @@ public class GenericRepository<T>(ChyveContext context) : IGenericRepository<T> 
 
     public async Task<T> Add(T entity)
     {
-        return (await _context.Set<T>().AddAsync(entity)).Entity;
+        var addedEntity = (await _context.Set<T>().AddAsync(entity)).Entity;
+        await _context.SaveChangesAsync();
+        return addedEntity;
     }
 
-    public async Task<T?> Delete(int id)
+    public async Task BeginTransaction()
+    {
+        await _context.Database.BeginTransactionAsync();
+    }
+
+    public async Task CommitTransaction()
+    {
+        await _context.Database.CommitTransactionAsync();
+    }
+
+    public async Task<T?> Delete(Guid id)
     {
         var entity = await GetById(id);
         if (entity == null)
@@ -31,9 +43,14 @@ public class GenericRepository<T>(ChyveContext context) : IGenericRepository<T> 
         return await _context.Set<T>().ToListAsync();
     }
 
-    public async Task<T?> GetById(int id)
+    public async Task<T?> GetById(Guid id)
     {
         return await _context.Set<T>().FindAsync(id);
+    }
+
+    public async Task RollbackTransaction()
+    {
+        await _context.Database.RollbackTransactionAsync();
     }
 
     public async Task<T?> Update(T entity)
@@ -46,7 +63,7 @@ public class GenericRepository<T>(ChyveContext context) : IGenericRepository<T> 
         return entity;
     }
 
-    public async Task<T?> Update(int id, Action<T> updateAction)
+    public async Task<T?> Update(Guid id, Action<T> updateAction)
     {
         var entity = await _context.Set<T>().FindAsync(id);
         if (entity == null)

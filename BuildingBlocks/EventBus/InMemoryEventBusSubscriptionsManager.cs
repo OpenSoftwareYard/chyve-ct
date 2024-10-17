@@ -33,7 +33,7 @@ public partial class InMemoryEventBusSubscriptionsManager : IEventBusSubscriptio
     {
         if (!HasSubscriptionsForEvent(eventName))
         {
-            _handlers.Add(eventName, new List<SubscriptionInfo>());
+            _handlers.Add(eventName, []);
         }
 
         if (_handlers[eventName].Any(s => s.HandlerType == type))

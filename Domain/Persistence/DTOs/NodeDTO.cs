@@ -2,7 +2,7 @@ namespace Persistence.DTOs;
 
 public record class NodeDTO
 {
-    public Guid NodeId { get; set; }
+    public Guid Id { get; set; }
     public int TotalCpu { get; set; }
     public int UsedCpu { get; set; }
     public int TotalRamGB { get; set; }

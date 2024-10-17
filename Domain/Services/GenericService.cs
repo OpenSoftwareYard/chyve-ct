@@ -17,7 +17,7 @@ public class GenericService<TEntity, TDto>(IGenericRepository<TEntity> repositor
         return _mapper.Map<TDto>(entity);
     }
 
-    public async Task<TDto?> Delete(int id)
+    public async Task<TDto?> Delete(Guid id)
     {
         var entity = await _repository.Delete(id);
         return _mapper.Map<TDto>(entity);
@@ -29,13 +29,13 @@ public class GenericService<TEntity, TDto>(IGenericRepository<TEntity> repositor
         return _mapper.Map<IEnumerable<TDto>>(entities);
     }
 
-    public async Task<TDto?> GetById(int id)
+    public async Task<TDto?> GetById(Guid id)
     {
         var entity = await _repository.GetById(id);
         return _mapper.Map<TDto>(entity);
     }
 
-    public async Task<TDto?> Update(int id, TDto dto)
+    public async Task<TDto?> Update(Guid id, TDto dto)
     {
         var entity = await _repository.GetById(id);
         if (entity == null)

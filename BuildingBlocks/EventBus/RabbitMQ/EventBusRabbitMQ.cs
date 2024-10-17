@@ -161,7 +161,7 @@ public class EventBusRabbitMQ : IEventBus, IDisposable
 
         try
         {
-            if (message.ToLowerInvariant().Contains("throw-fake-exception"))
+            if (message.Contains("throw-fake-exception", StringComparison.InvariantCultureIgnoreCase))
             {
                 throw new InvalidOperationException($"Fake exception requested: \"{message}\"");
             }
@@ -169,7 +169,7 @@ public class EventBusRabbitMQ : IEventBus, IDisposable
         }
         catch (Exception ex)
         {
-            _logger.LogWarning($"Error processing message, {ex.Message}");
+            _logger.LogWarning("Error processing message {message}", ex.Message);
         }
 
         _consumerChannel.BasicAck(eventArgs.DeliveryTag, multiple: false);
@@ -214,7 +214,7 @@ public class EventBusRabbitMQ : IEventBus, IDisposable
                 var concreteType = typeof(IIntegrationEventHandler<>).MakeGenericType(eventType!);
 
                 await Task.Yield();
-                await (Task)concreteType!.GetMethod("Handle")!.Invoke(handler, new object[] { integrationEvent! })!;
+                await (Task)concreteType!.GetMethod("Handle")!.Invoke(handler, [integrationEvent!])!;
             }
         }
     }
