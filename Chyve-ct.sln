@@ -27,6 +27,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Events", "Domain\Events\Eve
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchedulerCore", "Domain\SchedulerCore\SchedulerCore.csproj", "{D6C9F57A-618C-4F09-B450-E0EDA6562127}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChyveClient", "Domain\ChyveClient\ChyveClient.csproj", "{904B4895-AB3B-4BE8-AE63-194015F609D9}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,10 @@ Global
 		{D6C9F57A-618C-4F09-B450-E0EDA6562127}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D6C9F57A-618C-4F09-B450-E0EDA6562127}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D6C9F57A-618C-4F09-B450-E0EDA6562127}.Release|Any CPU.Build.0 = Release|Any CPU
+		{904B4895-AB3B-4BE8-AE63-194015F609D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{904B4895-AB3B-4BE8-AE63-194015F609D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{904B4895-AB3B-4BE8-AE63-194015F609D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{904B4895-AB3B-4BE8-AE63-194015F609D9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -82,6 +88,7 @@ Global
 		{1F17055F-3BF1-4048-8122-41E64D2076D8} = {3D4558A0-4E66-4C8B-AC9A-E7D98F81EB23}
 		{7900D8FF-7994-4C2A-B86E-93A584F09F70} = {747FF763-45F3-43EF-B0F7-4353AAA74C06}
 		{D6C9F57A-618C-4F09-B450-E0EDA6562127} = {747FF763-45F3-43EF-B0F7-4353AAA74C06}
+		{904B4895-AB3B-4BE8-AE63-194015F609D9} = {747FF763-45F3-43EF-B0F7-4353AAA74C06}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3B3C3FE5-66A5-497A-BF3D-6BCA5ADB8B4F}
