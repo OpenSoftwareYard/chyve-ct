@@ -8,4 +8,5 @@ public interface IZoneService : IGenericService<Zone, ZoneDTO>
 {
     Task<IEnumerable<ZoneDTO>?> GetZonesForUserId(string userId);
     Task<ZoneDTO?> CreateForUserId(ZoneDTO zone, string userId);
+    Task<IEnumerable<ZoneDTO>> GetUnscheduledZones();
 }

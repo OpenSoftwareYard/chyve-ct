@@ -22,4 +22,10 @@ public class ZoneService(IZoneRepository repository, IMapper mapper) : GenericSe
         var addedZone = await _zoneRepository.AddForUserId(zoneToAdd, userId);
         return _mapper.Map<ZoneDTO>(addedZone);
     }
+
+    public async Task<IEnumerable<ZoneDTO>> GetUnscheduledZones()
+    {
+        var zones = await _zoneRepository.GetUnscheduledZones();
+        return _mapper.Map<IEnumerable<ZoneDTO>>(zones);
+    }
 }

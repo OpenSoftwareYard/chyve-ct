@@ -1,5 +1,3 @@
-using EventBus;
-using Events;
 using Microsoft.AspNetCore.Mvc;
 using Persistence.DTOs;
 using Services;
@@ -8,10 +6,9 @@ namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ZonesController(IZoneService zoneService, IEventBus eventBus) : ControllerBase
+    public class ZonesController(IZoneService zoneService) : ControllerBase
     {
         private readonly IZoneService _zoneService = zoneService;
-        private readonly IEventBus _eventBus = eventBus;
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ZoneDTO>>> GetZones()
@@ -45,8 +42,6 @@ namespace WebAPI.Controllers
             {
                 return new StatusCodeResult(StatusCodes.Status500InternalServerError);
             }
-
-            _eventBus.Publish(new PlaceZoneIntegrationEvent(createdZone));
 
             return Ok(createdZone);
         }

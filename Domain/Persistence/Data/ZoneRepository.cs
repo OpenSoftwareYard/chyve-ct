@@ -39,4 +39,10 @@ public class ZoneRepository(ChyveContext context) : GenericRepository<Zone>(cont
 
         return await Add(zone);
     }
+
+    public async Task<IEnumerable<Zone>> GetUnscheduledZones()
+    {
+        var zones = await _context.Zones.Where(z => z.NodeId == null).OrderBy(z => z.CreatedAt).ToListAsync();
+        return zones;
+    }
 }

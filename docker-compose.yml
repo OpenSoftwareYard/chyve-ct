@@ -6,13 +6,13 @@ services:
       dockerfile: Apps/WebAPI/Dockerfile
     depends_on:
         - postgres
-        - rabbitmq
+        # - rabbitmq
     environment:
         - ConnectionString=Host=postgres;Database=postgres;Username=postgres;Password=root;Include Error Detail=true
         - ASPNETCORE_ENVIRONMENT=Development
         - ASPNETCORE_URLS=https://+:443;http://+:80
-        - EventBusConnection=rabbitmq
-        - SubscriptionClientName=scheduler
+        # - EventBusConnection=rabbitmq
+        # - SubscriptionClientName=scheduler
     ports:
       - "80"
       - "443"
@@ -23,12 +23,12 @@ services:
       dockerfile: Apps/Scheduler/Dockerfile
     depends_on:
         - postgres
-        - rabbitmq
+        # - rabbitmq
     environment:
         - ConnectionString=Host=postgres;Database=postgres;Username=postgres;Password=root;Include Error Detail=true
         - ASPNETCORE_ENVIRONMENT=Development
-        - EventBusConnection=rabbitmq
-        - SubscriptionClientName=scheduler
+        # - EventBusConnection=rabbitmq
+        # - SubscriptionClientName=scheduler
   apigw:
     image: ${DOCKER_REGISTRY-}apigw
     build:
@@ -58,13 +58,13 @@ services:
         - PGADMIN_DEFAULT_PASSWORD=SuperSecret
     ports:
         - "8080:80"
-  rabbitmq:
-    image: "rabbitmq:3-management-alpine"
-    container_name: rabbitmq
-    restart: always
-    ports:
-    - "5672:5672"
-    - "15672:15672"
+  # rabbitmq:
+  #   image: "rabbitmq:3-management-alpine"
+  #   container_name: rabbitmq
+  #   restart: always
+  #   ports:
+  #   - "5672:5672"
+  #   - "15672:15672"
 volumes:
   postgres_data:
   

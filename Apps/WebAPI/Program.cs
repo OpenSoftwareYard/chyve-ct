@@ -1,10 +1,7 @@
-using EventBus;
-using EventBus.RabbitMQ;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Persistence.Data;
 using Persistence.DTOs;
-using RabbitMQ.Client;
 using Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -44,52 +41,6 @@ builder.Services.AddSwaggerGen(c =>
 builder.Services.AddDbContext<ChyveContext>(options =>
     options.UseNpgsql(builder.Configuration["ConnectionString"] ?? "Host=localhost;Database=postgres;Username=postgres;Password=root;Include Error Detail=true")
 );
-
-builder.Services.AddSingleton<IRabbitMQPersistentConnection>(sp =>
-{
-    var logger = sp.GetRequiredService<ILogger<DefaultRabbitMQPersistentConnection>>();
-    var factory = new ConnectionFactory()
-    {
-        HostName = builder.Configuration["EventBusConnection"],
-        DispatchConsumersAsync = true
-    };
-
-    if (!string.IsNullOrEmpty(builder.Configuration["EventBusUserName"]))
-    {
-        factory.UserName = builder.Configuration["EventBusUserName"];
-    }
-
-    if (!string.IsNullOrEmpty(builder.Configuration["EventBusPassword"]))
-    {
-        factory.Password = builder.Configuration["EventBusPassword"];
-    }
-
-    var retryCount = 5;
-    if (!string.IsNullOrEmpty(builder.Configuration["EventBusRetryCount"]))
-    {
-        retryCount = int.Parse(builder.Configuration["EventBusRetryCount"]!);
-    }
-
-    return new DefaultRabbitMQPersistentConnection(factory, logger, retryCount);
-});
-
-builder.Services.AddSingleton<IEventBus, EventBusRabbitMQ>(sp =>
-{
-    var subscriptionClientName = builder.Configuration["SubscriptionClientName"];
-    var rabbitMQPersistentConnection = sp.GetRequiredService<IRabbitMQPersistentConnection>();
-    var logger = sp.GetRequiredService<ILogger<EventBusRabbitMQ>>();
-    var eventBusSubscriptionsManager = sp.GetRequiredService<IEventBusSubscriptionsManager>();
-
-    var retryCount = 5;
-    if (!string.IsNullOrEmpty(builder.Configuration["EventBusRetryCount"]))
-    {
-        retryCount = int.Parse(builder.Configuration["EventBusRetryCount"]!);
-    }
-
-    return new EventBusRabbitMQ(rabbitMQPersistentConnection, logger, sp, eventBusSubscriptionsManager, retryCount, subscriptionClientName);
-});
-
-builder.Services.AddSingleton<IEventBusSubscriptionsManager, InMemoryEventBusSubscriptionsManager>();
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 

@@ -25,5 +25,17 @@ public class ChyveContext : DbContext
                     v => v.ToString(),
                     v => IPNetwork.Parse(v)
             );
+
+        modelBuilder.Entity<Node>()
+            .Property(e => e.CreatedAt)
+            .HasDefaultValueSql("now()");
+
+        modelBuilder.Entity<Zone>()
+            .Property(e => e.CreatedAt)
+            .HasDefaultValueSql("now()");
+
+        modelBuilder.Entity<Organization>()
+            .Property(e => e.CreatedAt)
+            .HasDefaultValueSql("now()");
     }
 }
