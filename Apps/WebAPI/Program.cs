@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Persistence.Data;
 using Persistence.DTOs;
+using Persistence.Entities;
 using Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -46,6 +47,8 @@ builder.Services.AddAutoMapper(typeof(MappingProfile));
 
 builder.Services.AddScoped<IZoneRepository, ZoneRepository>();
 builder.Services.AddScoped<IZoneService, ZoneService>();
+builder.Services.AddScoped<IGenericRepository<Node>, GenericRepository<Node>>();
+builder.Services.AddScoped<INodeService, NodeService>();
 
 builder.Services.AddHealthChecks();
 

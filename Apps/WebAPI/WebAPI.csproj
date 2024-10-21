@@ -33,6 +33,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Domain\Persistence\Persistence.csproj" />
     <ProjectReference Include="..\..\Domain\Services\Services.csproj" />
+    <ProjectReference Include="..\..\Domain\ChyveClient\ChyveClient.csproj" />
   </ItemGroup>
 
 </Project>
