@@ -15,6 +15,5 @@ public partial class Client
         _httpClient = httpClient;
 
         _httpClient.BaseAddress = _uri;
-        _httpClient.DefaultRequestHeaders.Add(HeaderNames.Authorization, $"Bearer {_accessToken}");
     }
 }

@@ -35,23 +35,24 @@ public record Zone
     [JsonPropertyName("physical_mem")]
     public required string PhysicalMemory { get; set; }
 
+    [JsonPropertyName("physical_disk")]
     public required string PhysicalDisk { get; set; } = "4G";
 
     public required Net Net { get; set; }
 
-    public static int ParsePhysicalMemoryString(string physicalMemory)
+    public static int ParsePhysicalSizeString(string physicalSize)
     {
-        var parsed_mem_amount = int.Parse(physicalMemory.SkipLast(1).ToString()!);
-        if (physicalMemory.ToLower().EndsWith('g'))
+        var parsed_mem_amount = int.Parse(physicalSize[0..^1]);
+        if (physicalSize.ToLower().EndsWith('g'))
         {
             return parsed_mem_amount;
         }
-        if (physicalMemory.ToLower().EndsWith('m'))
+        if (physicalSize.ToLower().EndsWith('m'))
         {
             return parsed_mem_amount % 1000 + 1;
         }
 
         // Should not happen
-        throw new Exception("Unknown memory unit");
+        throw new Exception("Unknown size unit");
     }
 }
