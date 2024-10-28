@@ -17,15 +17,10 @@ namespace WebAPI.Controllers
         {
             var nodes = await _nodeService.GetAll();
 
-            if (nodes == null)
-            {
-                return NotFound();
-            }
-
             return Ok(nodes);
         }
 
-        [HttpGet("{nodeId}/zones")]
+        [HttpGet("{nodeId:guid}/zones")]
         public async Task<ActionResult<IEnumerable<ZoneDTO>>> GetZonesForNode(Guid nodeId)
         {
             var node = await _nodeService.GetById(nodeId);

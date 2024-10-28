@@ -1,3 +1,5 @@
+using System.Net;
+
 namespace Persistence.DTOs;
 
 public record class NodeDTO
@@ -12,4 +14,9 @@ public record class NodeDTO
     public int TotalDiskGB { get; set; }
     public int UsedDiskGB { get; set; }
     public required List<ZoneDTO> Zones { get; set; }
+    public IPNetwork PrivateZoneNetwork { get; set; }
+    public required IPAddress DefRouter { get; set; }
+    public required string ExternalNetworkDevice { get; set; }
+    public required string InternalStubDevice { get; set; }
+    public required string ZoneBasePath { get; set; }
 }

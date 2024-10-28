@@ -1,6 +1,3 @@
-using System;
-using Persistence.Entities;
-
 namespace Persistence.DTOs;
 
 public record class ZoneDTO
