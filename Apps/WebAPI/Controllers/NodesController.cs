@@ -1,5 +1,4 @@
 using ChyveClient;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Persistence.DTOs;
 using Services;
@@ -30,11 +29,7 @@ namespace WebAPI.Controllers
                 return NotFound();
             }
 
-            var httpClient = new HttpClient();
-
-            var client = new Client(node.WebApiUri, node.AccessToken, httpClient);
-
-            var zones = await client.GetZones();
+            var zones = await Client.GetZones(node.WebApiUri, node.AccessToken);
 
             return Ok(zones);
         }

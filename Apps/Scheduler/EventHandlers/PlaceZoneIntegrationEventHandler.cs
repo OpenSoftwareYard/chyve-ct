@@ -32,6 +32,8 @@ public class PlaceZoneHandler(ILogger<PlaceZoneHandler> logger, INodeService nod
             var selectedNode = await _nodeService.AllocateZoneToOptimalNode(zone);
             _logger.LogInformation("Selected node {nodeId} for zone {zoneId}", selectedNode.Id, zone.Id);
 
+
+
             zone.NodeId = selectedNode.Id;
             await _zoneService.Update(zone.Id, zone);
         }

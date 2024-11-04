@@ -45,9 +45,10 @@ builder.Services.AddDbContext<ChyveContext>(options =>
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
+builder.Services.AddScoped<ChyveClient.Client>();
 builder.Services.AddScoped<IZoneRepository, ZoneRepository>();
 builder.Services.AddScoped<IZoneService, ZoneService>();
-builder.Services.AddScoped<IGenericRepository<Node>, GenericRepository<Node>>();
+builder.Services.AddScoped<INodeRepository, NodeRepository>();
 builder.Services.AddScoped<INodeService, NodeService>();
 
 builder.Services.AddHealthChecks();

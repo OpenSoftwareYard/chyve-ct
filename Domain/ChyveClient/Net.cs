@@ -6,14 +6,17 @@ namespace ChyveClient;
 
 public partial class Client
 {
-    public async Task<Vnic> CreateVnic(Vnic vnic)
+    public static async Task<TaskHandle> CreateVnic(Uri baseUri, string accessToken, Vnic vnic)
     {
-        var res = await _httpClient.PostAsJsonAsync(
-            "/net/vnics",
+        var httpClient = new HttpClient();
+        httpClient.BaseAddress = baseUri;
+
+        var res = await httpClient.PostAsJsonAsync(
+            $"/net/vnics?api_key={accessToken}",
             vnic
         );
 
-        var createdVnic = await res.Content.ReadFromJsonAsync<Vnic>() ?? throw new Exception($"Failed to create vnic {await res.Content.ReadAsStringAsync()}");
-        return createdVnic;
+        var createdVnicHandle = await res.Content.ReadFromJsonAsync<TaskHandle>() ?? throw new Exception($"Failed to create vnic {await res.Content.ReadAsStringAsync()}");
+        return createdVnicHandle;
     }
 }

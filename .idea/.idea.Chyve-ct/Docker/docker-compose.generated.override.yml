@@ -1,0 +1,56 @@
+# This is a generated file. Not intended for manual editing.
+services:
+  apigw:
+    build:
+      context: "/Users/mihaicostea/Developer/chyve-ct"
+      dockerfile: "BuildingBlocks/ApiGateway/Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Debug/net8.0/ApiGateway.dll"
+    environment:
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+    image: "apigw:dev"
+    ports: []
+    volumes:
+    - "/Users/mihaicostea/.nuget/packages:/home/app/.nuget/packages"
+    - "/Users/mihaicostea/Developer/chyve-ct/BuildingBlocks/ApiGateway:/app:rw"
+    - "/Users/mihaicostea/Developer/chyve-ct:/src:rw"
+    working_dir: "/app"
+  scheduler:
+    build:
+      context: "/Users/mihaicostea/Developer/chyve-ct"
+      dockerfile: "Apps/Scheduler/Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Debug/net8.0/Scheduler.dll"
+    environment:
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+    image: "scheduler:dev"
+    ports: []
+    volumes:
+    - "/Users/mihaicostea/.nuget/packages:/home/app/.nuget/packages"
+    - "/Users/mihaicostea/Developer/chyve-ct/Apps/Scheduler:/app:rw"
+    - "/Users/mihaicostea/Developer/chyve-ct:/src:rw"
+    working_dir: "/app"
+  webapi:
+    build:
+      context: "/Users/mihaicostea/Developer/chyve-ct"
+      dockerfile: "Apps/WebAPI/Dockerfile"
+      target: "base"
+    command: []
+    entrypoint:
+    - "dotnet"
+    - "/app/bin/Debug/net8.0/WebAPI.dll"
+    environment:
+      DOTNET_USE_POLLING_FILE_WATCHER: "true"
+    image: "webapi:dev"
+    ports: []
+    volumes:
+    - "/Users/mihaicostea/.nuget/packages:/home/app/.nuget/packages"
+    - "/Users/mihaicostea/Developer/chyve-ct/Apps/WebAPI:/app:rw"
+    - "/Users/mihaicostea/Developer/chyve-ct:/src:rw"
+    working_dir: "/app"

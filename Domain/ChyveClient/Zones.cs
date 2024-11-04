@@ -6,10 +6,13 @@ namespace ChyveClient;
 
 public partial class Client
 {
-    public async Task<IEnumerable<ZoneDTO>?> GetZones()
+    public static async Task<IEnumerable<ZoneDTO>?> GetZones(Uri baseUri, string accessToken)
     {
-        var zones = await _httpClient.GetFromJsonAsync<IEnumerable<Zone>>(
-            $"/zones?api_key={_accessToken}"
+        var httpClient = new HttpClient();
+        httpClient.BaseAddress = baseUri;
+
+        var zones = await httpClient.GetFromJsonAsync<IEnumerable<Zone>>(
+            $"/zones?api_key={accessToken}"
         );
 
         return zones?.Select(z => new ZoneDTO
@@ -22,22 +25,18 @@ public partial class Client
         });
     }
 
-    public async Task<ZoneDTO> CreateZone(Zone zone)
+    public static async Task<TaskHandle> CreateZone(Uri baseUri, string accessToken, Zone zone)
     {
-        var res = await _httpClient.PutAsJsonAsync(
-            "/zones",
+        var httpClient = new HttpClient();
+        httpClient.BaseAddress = baseUri;
+
+        var res = await httpClient.PostAsJsonAsync(
+            $"/zones?api_key={accessToken}",
             zone
         );
 
-        var returnedZone = await res.Content.ReadFromJsonAsync<Zone>() ?? throw new Exception($"Failed to create zone {await res.Content.ReadAsStringAsync()}");
+        var taskHandle = await res.Content.ReadFromJsonAsync<TaskHandle>() ?? throw new Exception($"Failed to create zone {await res.Content.ReadAsStringAsync()}");
 
-        return new ZoneDTO
-        {
-            Id = new Guid(returnedZone.Id),
-            Name = returnedZone.Name,
-            CpuCount = returnedZone.CpuCount,
-            RamGB = Zone.ParsePhysicalSizeString(zone.PhysicalMemory),
-            DiskGB = Zone.ParsePhysicalSizeString(zone.PhysicalDisk),
-        };
+        return taskHandle;
     }
 }

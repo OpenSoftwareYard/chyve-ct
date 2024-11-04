@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using Persistence.Data;
 using Persistence.DTOs;
-using Persistence.Entities;
 using Scheduler;
 using Scheduler.EventHandlers;
 using Services;
@@ -23,8 +22,9 @@ IHost host = Host.CreateDefaultBuilder(args)
             ServiceLifetime.Transient, ServiceLifetime.Transient
         );
 
+        services.AddScoped<ChyveClient.Client>();
         services.AddScoped<IZoneRepository, ZoneRepository>();
-        services.AddScoped<IGenericRepository<Node>, GenericRepository<Node>>();
+        services.AddScoped<INodeRepository, NodeRepository>();
         services.AddScoped<INodeService, NodeService>();
         services.AddScoped<IZoneService, ZoneService>();
         services.AddScoped<PlaceZoneHandler>();
