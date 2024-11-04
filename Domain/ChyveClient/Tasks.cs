@@ -6,17 +6,21 @@ namespace ChyveClient;
 
 public partial class Client
 {
-    public static async Task<TaskHandle?> GetTaskDetails(Uri baseUri, string accessToken, TaskHandle taskHandle)
+    public static async Task<IEnumerable<TaskHandle>?> GetTaskDetails(Uri baseUri, string accessToken, IEnumerable<TaskHandle> taskHandles)
     {
         var httpClient = new HttpClient();
         httpClient.BaseAddress = baseUri;
 
-        Console.WriteLine("Getting task details: {0}", $"{baseUri}tasks?api_key={accessToken}&task_id={taskHandle.Id}");
+        var requestUri = $"/tasks?api_key={accessToken}";
 
-        var taskHandles = await httpClient.GetFromJsonAsync<IEnumerable<TaskHandle>>(
-            $"/tasks?api_key={accessToken}&task_id={taskHandle.Id}"
+        requestUri = taskHandles.Aggregate(requestUri, (current, taskHandle) => current + $"&task_id={taskHandle.Id}");
+
+        Console.WriteLine("Getting task details: {0}", $"{baseUri}{requestUri}");
+
+        var returnedTaskHandles = await httpClient.GetFromJsonAsync<IEnumerable<TaskHandle>>(
+            requestUri
             );
 
-        return taskHandles?.FirstOrDefault();
+        return returnedTaskHandles;
     }
 }

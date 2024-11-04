@@ -25,7 +25,7 @@ public partial class Client
         });
     }
 
-    public static async Task<TaskHandle> CreateZone(Uri baseUri, string accessToken, Zone zone)
+    public static async Task<IEnumerable<TaskHandle>> CreateZone(Uri baseUri, string accessToken, Zone zone)
     {
         var httpClient = new HttpClient();
         httpClient.BaseAddress = baseUri;
@@ -35,7 +35,7 @@ public partial class Client
             zone
         );
 
-        var taskHandle = await res.Content.ReadFromJsonAsync<TaskHandle>() ?? throw new Exception($"Failed to create zone {await res.Content.ReadAsStringAsync()}");
+        var taskHandle = await res.Content.ReadFromJsonAsync<IEnumerable<TaskHandle>>() ?? throw new Exception($"Failed to create zone {await res.Content.ReadAsStringAsync()}");
 
         return taskHandle;
     }

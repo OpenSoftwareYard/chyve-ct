@@ -46,19 +46,19 @@ namespace Services
                 });
 
                 var policy = Policy.Handle<Exception>()
-                    .WaitAndRetryAsync(3, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
+                    .WaitAndRetryAsync(9, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
 
                 var vnicCreated = await policy.ExecuteAsync(async () =>
                 {
-                    var task = await Client.GetTaskDetails(selectedNode.WebApiUri, selectedNode.AccessToken, vnicTask);
+                    var tasks = await Client.GetTaskDetails(selectedNode.WebApiUri, selectedNode.AccessToken, [vnicTask]);
 
-                    return task?.Status.ToLowerInvariant() switch
+                    return tasks?.First().Status.ToLowerInvariant() switch
                     {
                         "completed" => true,
                         "failed" => false,
                         "cancelled" => false,
                         "timedOut" => false,
-                        _ => throw new Exception($"Create vnic not finished {task?.Status}")
+                        _ => throw new Exception($"Create vnic not finished {tasks?.First().Status}")
                     };
                 });
 
@@ -85,20 +85,35 @@ namespace Services
                     }
                 };
 
-                var createdZoneTask = await Client.CreateZone(selectedNode.WebApiUri, selectedNode.AccessToken, zoneToCreate);
+                var createdZoneTasks = await Client.CreateZone(selectedNode.WebApiUri, selectedNode.AccessToken, zoneToCreate);
 
                 var zoneCreated = await policy.ExecuteAsync(async () =>
                 {
-                    var task = await Client.GetTaskDetails(selectedNode.WebApiUri, selectedNode.AccessToken, createdZoneTask);
+                    var tasks = await Client.GetTaskDetails(selectedNode.WebApiUri, selectedNode.AccessToken, createdZoneTasks);
 
-                    return task?.Status.ToLowerInvariant() switch
+                    if (tasks == null)
                     {
-                        "completed" => true,
-                        "failed" => false,
-                        "cancelled" => false,
-                        "timedOut" => false,
-                        _ => throw new Exception($"Create zone not finished {task?.Status}")
-                    };
+                        // No tasks were returned from chyve. This is really bad.
+                        return false;
+                    }
+
+                    foreach (var task in tasks)
+                    {
+                        if (task.Status.Equals("completed", StringComparison.InvariantCultureIgnoreCase))
+                        {
+                            continue;
+                        }
+
+                        return task.Status.ToLowerInvariant() switch
+                        {
+                            "failed" => false,
+                            "cancelled" => false,
+                            "timedOut" => false,
+                            _ => throw new Exception($"Create zone not finished {task?.Status}")
+                        };
+                    }
+
+                    return true;
                 });
 
                 if (!zoneCreated)

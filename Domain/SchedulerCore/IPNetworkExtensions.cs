@@ -20,6 +20,7 @@ public static class IPNetworkExtensions
 
         byte[] currentBytes = [.. firstAddressBytes];
         IncrementIPAddress(currentBytes);
+        IncrementIPAddress(currentBytes);
 
         while (CompareBytes(currentBytes, lastAddressBytes) < 0)
         {

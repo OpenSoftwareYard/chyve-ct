@@ -1,7 +1,17 @@
 using System;
+using System.ComponentModel;
 using System.Net;
 
 namespace Persistence.Entities;
+
+public enum ZoneStatus
+{
+    UNSCHEDULED,
+    RUNNING,
+    STOPPED,
+    SCHEDULING,
+    SCHEDULED,
+}
 
 public class Zone : BaseEntity
 {
@@ -15,6 +25,8 @@ public class Zone : BaseEntity
     public int CpuCount { get; set; }
     public int RamGB { get; set; }
     public int DiskGB { get; set; }
+    [DefaultValue(ZoneStatus.UNSCHEDULED)]
+    public ZoneStatus Status { get; set; }
 
     public required Guid OrganizationId { get; set; }
     public required Organization Organization { get; set; }

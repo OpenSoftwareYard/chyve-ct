@@ -1,3 +1,5 @@
+using Persistence.Entities;
+
 namespace Persistence.DTOs;
 
 public record class ZoneDTO
@@ -9,4 +11,5 @@ public record class ZoneDTO
     public int DiskGB { get; set; }
     public Guid? NodeId { get; set; }
     public Guid OrganizationId { get; set; }
+    public ZoneStatus Status { get; set; }
 }
