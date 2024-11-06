@@ -6,6 +6,19 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Net.Http.Headers" Version="8.0.10" />
+    <PackageReference Include="SSH.NET" Version="2024.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Scripts\GetZones.sh">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Scripts\CreateVnic.sh">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Scripts\CreateZone.sh">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
   <PropertyGroup>

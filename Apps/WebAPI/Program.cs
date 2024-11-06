@@ -1,3 +1,4 @@
+using ChyveClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 using Persistence.Data;
@@ -45,7 +46,11 @@ builder.Services.AddDbContext<ChyveContext>(options =>
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
-builder.Services.AddScoped<ChyveClient.Client>();
+builder.Services.AddScoped<ChyveClient.Client>(sp =>
+{
+    var projectPath = Path.GetDirectoryName(typeof(Program).Assembly.Location);
+    return new Client(builder.Configuration["PrivateKey"]!, projectPath!);
+});
 builder.Services.AddScoped<IZoneRepository, ZoneRepository>();
 builder.Services.AddScoped<IZoneService, ZoneService>();
 builder.Services.AddScoped<INodeRepository, NodeRepository>();

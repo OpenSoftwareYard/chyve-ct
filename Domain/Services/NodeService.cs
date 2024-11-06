@@ -5,15 +5,17 @@ using Persistence.Entities;
 using ChyveClient;
 using static SchedulerCore.SchedulerCore;
 using System.Collections.Immutable;
+using ChyveClient.Models;
 using Polly;
 using SchedulerCore;
 
 namespace Services
 {
-    public class NodeService(INodeRepository repository, IMapper mapper, Client chyveClient) : GenericService<Node, NodeDTO>(repository, mapper), INodeService
+    public class NodeService(INodeRepository repository, IMapper mapper, ChyveClient.Client chyveClient) : GenericService<Node, NodeDTO>(repository, mapper), INodeService
     {
-        private readonly Client _chyveClient = chyveClient;
         private readonly INodeRepository _nodeRepository = repository;
+        private readonly ChyveClient.Client _chyveClient = chyveClient;
+
         public async Task<NodeDTO> AllocateZoneToOptimalNode(ZoneDTO zone)
         {
             await _repository.BeginTransaction();
@@ -37,89 +39,49 @@ namespace Services
 
                 var availableIpAddress = selectedNode.PrivateZoneNetwork.GetNextAvailableAddress(usedAddresses);
 
-                var vnicLink = $"{zone.Name}0";
-
-                var vnicTask = await Client.CreateVnic(selectedNode.WebApiUri, selectedNode.AccessToken, new ChyveClient.Models.Vnic
+                var vnic = new Vnic()
                 {
-                    Link = vnicLink,
-                    Over = selectedNode.InternalStubDevice
-                });
+                    Link = zone.Id.ToString(),
+                    Over = selectedNode.InternalStubDevice,
+                };
 
-                var policy = Policy.Handle<Exception>()
-                    .WaitAndRetryAsync(9, retryAttempt => TimeSpan.FromSeconds(Math.Pow(2, retryAttempt)));
+                vnic.SetShortLinkName(zone.Id.ToString());
 
-                var vnicCreated = await policy.ExecuteAsync(async () =>
-                {
-                    var tasks = await Client.GetTaskDetails(selectedNode.WebApiUri, selectedNode.AccessToken, [vnicTask]);
-
-                    return tasks?.First().Status.ToLowerInvariant() switch
-                    {
-                        "completed" => true,
-                        "failed" => false,
-                        "cancelled" => false,
-                        "timedOut" => false,
-                        _ => throw new Exception($"Create vnic not finished {tasks?.First().Status}")
-                    };
-                });
-
-                if (!vnicCreated)
-                {
-                    throw new Exception($"Failed to create vnic {vnicLink}");
-                }
+                var createdVnic = await _chyveClient.CreateVnic(selectedNode, vnic);
 
                 var zoneToCreate = new ChyveClient.Models.Zone
                 {
-                    Id = zone.Id.ToString(),
-                    Name = zone.Name,
+                    Autoboot = "false",
+                    BootArgs = "",
+                    Name = zone.Id.ToString(),
                     Path = $"{selectedNode.ZoneBasePath}/{zone.Id}",
                     Brand = "pkgsrc",
                     IPType = "exclusive",
-                    CpuCount = zone.CpuCount,
-                    PhysicalDisk = $"4G",
-                    PhysicalMemory = $"{zone.RamGB}G",
-                    Net = new ChyveClient.Models.Net
+                    CappedCpu = new CappedCpu()
                     {
-                        Physical = vnicLink,
-                        AllowedAddress = availableIpAddress.ToString(),
-                        RouterAddress = selectedNode.DefRouter!.ToString(),
-                    }
+                        Ncpus = zone.CpuCount,
+                    },
+                    CappedMemory = new CappedMemory()
+                    {
+                        Physical = zone.RamGB,
+                    },
+                    Net =
+                    [
+                        new Net()
+                        {
+                            Physical = createdVnic.Link,
+                            AllowedAddress = $"{availableIpAddress.ToString()}/{selectedNode.PrivateZoneNetwork.PrefixLength}",
+                            DefRouter = selectedNode.DefRouter!.ToString(),
+                        }
+                    ],
+                    FsAllowed = "",
+                    HostId = "",
+                    LimitPriv = "",
+                    Pool = "",
+                    SchedulingClass = "",
                 };
 
-                var createdZoneTasks = await Client.CreateZone(selectedNode.WebApiUri, selectedNode.AccessToken, zoneToCreate);
-
-                var zoneCreated = await policy.ExecuteAsync(async () =>
-                {
-                    var tasks = await Client.GetTaskDetails(selectedNode.WebApiUri, selectedNode.AccessToken, createdZoneTasks);
-
-                    if (tasks == null)
-                    {
-                        // No tasks were returned from chyve. This is really bad.
-                        return false;
-                    }
-
-                    foreach (var task in tasks)
-                    {
-                        if (task.Status.Equals("completed", StringComparison.InvariantCultureIgnoreCase))
-                        {
-                            continue;
-                        }
-
-                        return task.Status.ToLowerInvariant() switch
-                        {
-                            "failed" => false,
-                            "cancelled" => false,
-                            "timedOut" => false,
-                            _ => throw new Exception($"Create zone not finished {task?.Status}")
-                        };
-                    }
-
-                    return true;
-                });
-
-                if (!zoneCreated)
-                {
-                    throw new Exception($"Failed to create zone {zoneToCreate.Name}");
-                }
+                _ = await _chyveClient.CreateZone(selectedNode, zoneToCreate);
 
                 await Update(selectedNode.Id, selectedNode);
 

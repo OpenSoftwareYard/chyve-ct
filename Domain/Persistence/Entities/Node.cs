@@ -5,8 +5,9 @@ namespace Persistence.Entities;
 
 public class Node : BaseEntity
 {
-    public required Uri WebApiUri { get; set; }
-    public required string AccessToken { get; set; }
+    public required string Address { get; set; }
+    public required byte[] ConnectionKey { get; set; }
+    public required string ConnectionUser { get; set; }
     public required string ExternalNetworkDevice { get; set; }
     public required string InternalStubDevice { get; set; }
     public required IPAddress DefRouter { get; set; }

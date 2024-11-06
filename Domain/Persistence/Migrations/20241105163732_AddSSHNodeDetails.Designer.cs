@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Net;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Persistence.Data;
@@ -13,9 +14,11 @@ using Persistence.Data;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(ChyveContext))]
-    partial class ChyveContextModelSnapshot : ModelSnapshot
+    [Migration("20241105163732_AddSSHNodeDetails")]
+    partial class AddSSHNodeDetails
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

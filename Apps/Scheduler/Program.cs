@@ -1,3 +1,4 @@
+using ChyveClient;
 using Microsoft.EntityFrameworkCore;
 using Persistence.Data;
 using Persistence.DTOs;
@@ -22,7 +23,12 @@ IHost host = Host.CreateDefaultBuilder(args)
             ServiceLifetime.Transient, ServiceLifetime.Transient
         );
 
-        services.AddScoped<ChyveClient.Client>();
+        services.AddScoped<ChyveClient.Client>(sp =>
+        {
+            var projectPath = Path.GetDirectoryName(typeof(Program).Assembly.Location);
+            return new Client(host.Configuration["PrivateKey"]!, projectPath!);
+        });
+
         services.AddScoped<IZoneRepository, ZoneRepository>();
         services.AddScoped<INodeRepository, NodeRepository>();
         services.AddScoped<INodeService, NodeService>();
