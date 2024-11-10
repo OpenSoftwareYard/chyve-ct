@@ -63,7 +63,7 @@ namespace Services
                     },
                     CappedMemory = new CappedMemory()
                     {
-                        Physical = zone.RamGB,
+                        Physical = $"{zone.RamGB}G",
                     },
                     Net =
                     [

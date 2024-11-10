@@ -7,7 +7,7 @@ namespace Scheduler;
 public class Worker(ILogger<Worker> logger, PlaceZoneHandler placeZoneHandler) : BackgroundService
 {
     private readonly ILogger<Worker> _logger = logger;
-    private readonly TimeSpan _period = TimeSpan.FromSeconds(5);
+    private readonly TimeSpan _period = TimeSpan.FromSeconds(15);
     private readonly PlaceZoneHandler _placeZoneHandler = placeZoneHandler;
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -22,7 +22,8 @@ public class Worker(ILogger<Worker> logger, PlaceZoneHandler placeZoneHandler) :
         {
             try
             {
-                await _placeZoneHandler.PlaceUnscheduledZones();
+                // Don't wait for the task
+                _ = _placeZoneHandler.PlaceUnscheduledZones();
             }
             catch (Exception ex)
             {

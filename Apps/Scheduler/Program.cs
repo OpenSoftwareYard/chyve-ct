@@ -1,7 +1,9 @@
 using ChyveClient;
 using Microsoft.EntityFrameworkCore;
+using Npgsql;
 using Persistence.Data;
 using Persistence.DTOs;
+using Persistence.Entities;
 using Scheduler;
 using Scheduler.EventHandlers;
 using Services;
@@ -18,8 +20,12 @@ IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((host, services) =>
     {
         services.AddHostedService<Worker>();
+        var dataSourceBuilder = new NpgsqlDataSourceBuilder(host.Configuration["ConnectionString"]);
+        dataSourceBuilder.MapEnum<ZoneStatus>();
+        var dataSource = dataSourceBuilder.Build();
+
         services.AddDbContext<ChyveContext>(options =>
-            options.UseNpgsql(host.Configuration["ConnectionString"]),
+            options.UseNpgsql(dataSource),
             ServiceLifetime.Transient, ServiceLifetime.Transient
         );
 

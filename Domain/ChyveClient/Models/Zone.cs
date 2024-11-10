@@ -7,13 +7,14 @@ namespace ChyveClient.Models;
 public record CappedCpu
 {
     [JsonPropertyName("ncpus")]
+    [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString | JsonNumberHandling.WriteAsString)]
     public float Ncpus { get; set; }
 }
 
 public record CappedMemory
 {
     [JsonPropertyName("physical")]
-    public float Physical { get; set; }
+    public string Physical { get; set; }
 }
 
 public record Net

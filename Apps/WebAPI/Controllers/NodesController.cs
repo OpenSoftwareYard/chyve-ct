@@ -7,9 +7,10 @@ namespace WebAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class NodesController(INodeService nodeService, Client chyveClient) : ControllerBase
+    public class NodesController(INodeService nodeService, IZoneService zoneService, Client chyveClient) : ControllerBase
     {
         private readonly INodeService _nodeService = nodeService;
+        private readonly IZoneService _zoneService = zoneService;
         private readonly Client _chyveClient = chyveClient;
 
         [HttpGet]
@@ -30,7 +31,7 @@ namespace WebAPI.Controllers
                 return NotFound();
             }
 
-            var zones = await _chyveClient.GetZones(node);
+            var zones = await _zoneService.PopulateZonesForNode(node);
 
             return Ok(zones);
         }
@@ -45,6 +46,7 @@ namespace WebAPI.Controllers
                 return NotFound();
             }
 
+            // TODO: Remove client reference here, move implementation to NodeService
             node.EncryptConnectionKey(_chyveClient.EncryptionKey, connectionKey);
 
             var updatedNode = await _nodeService.Update(nodeId, node);

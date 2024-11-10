@@ -19,6 +19,8 @@ public class ChyveContext : DbContext
     {
         modelBuilder.UseHiLo();
 
+        modelBuilder.HasPostgresEnum<ZoneStatus>();
+
         modelBuilder.Entity<Node>()
                 .Property(e => e.PrivateZoneNetwork)
                 .HasConversion(

@@ -4,14 +4,16 @@ using System.Text.Json;
 using ChyveClient.Models;
 using Microsoft.VisualBasic.FileIO;
 using Persistence.DTOs;
+using Persistence.Entities;
 using Renci.SshNet;
+using Zone = ChyveClient.Models.Zone;
 
 namespace ChyveClient;
 
 public class Client(string encryptionKey, string projectPath)
 {
     public readonly string EncryptionKey = encryptionKey;
-    public async Task<IEnumerable<Zone>> GetZones(NodeDTO node)
+    public async Task<IEnumerable<ZoneDTO>> GetZones(NodeDTO node)
     {
         var key = await node.DecryptConnectionKey(EncryptionKey);
         var sshKeyStream = new MemoryStream(Encoding.UTF8.GetBytes(key));
@@ -21,14 +23,33 @@ public class Client(string encryptionKey, string projectPath)
         var source = new CancellationTokenSource();
         await client.ConnectAsync(source.Token);
 
-        var zones = new List<Zone>();
+        var zones = new List<ZoneDTO>();
 
         using var reader = new StreamReader($"{projectPath}/Scripts/GetZones.sh");
         using var cmd = client.RunCommand(await reader.ReadToEndAsync(source.Token));
         Console.WriteLine(cmd.Result);
-        var parsedZones = JsonSerializer.Deserialize<IDictionary<string, Zone>>(cmd.Result);
 
-        if (parsedZones != null) zones.AddRange(parsedZones.Values);
+        var parsedZones = JsonSerializer.Deserialize<IDictionary<string, Zone>>(cmd.Result)?.Values ?? [];
+
+        foreach (var zone in parsedZones)
+        {
+            if (!Guid.TryParse(zone.Name, out var parsedZoneId))
+            {
+                parsedZoneId = Guid.Empty;
+            }
+
+            zones.Add(new ZoneDTO()
+            {
+                Name = zone.Name,
+                CpuCount = (int)(zone.CappedCpu?.Ncpus ?? 0),
+                DiskGB = 4,
+                Id = parsedZoneId,
+                NodeId = node.Id,
+                OrganizationId = Guid.Empty,
+                RamGB = int.Parse(zone.CappedMemory?.Physical.Trim('G') ?? "0"),
+                Status = ZoneStatus.SCHEDULED,
+            });
+        }
 
         return zones;
     }

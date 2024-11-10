@@ -35,16 +35,7 @@ public class ZoneService(IZoneRepository repository, IMapper mapper, ChyveClient
     {
         var zones = await _chyveClient.GetZones(node);
 
-        return zones.Select(zone => new ZoneDTO()
-        {
-            Id = new Guid(),
-            Name = zone.Name,
-            CpuCount = (int)(zone.CappedCpu?.Ncpus ?? 0),
-            RamGB = (int)(zone.CappedMemory?.Physical ?? 0),
-            DiskGB = 4,
-            OrganizationId = Guid.Empty,
-            Status = ZoneStatus.SCHEDULED,
-        })
-            .ToList();
+        // TODO: Implement matching zones and statuses from db
+        return zones;
     }
 }
