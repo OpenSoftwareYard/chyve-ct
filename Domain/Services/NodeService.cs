@@ -2,7 +2,6 @@
 using Persistence.Data;
 using Persistence.DTOs;
 using Persistence.Entities;
-using ChyveClient;
 using static SchedulerCore.SchedulerCore;
 using System.Collections.Immutable;
 using ChyveClient.Models;
@@ -93,6 +92,22 @@ namespace Services
                 await _repository.RollbackTransaction();
                 throw;
             }
+        }
+
+        public async Task<NodeDTO?> UpdateNodeConnectionKey(Guid nodeId, string connectionKey)
+        {
+            var node = await GetById(nodeId);
+
+            if (node == null)
+            {
+                return null;
+            }
+
+            node.EncryptConnectionKey(_chyveClient.EncryptionKey, connectionKey);
+
+            var updatedNode = await Update(node.Id, node);
+
+            return updatedNode;
         }
     }
 }

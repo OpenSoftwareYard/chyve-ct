@@ -39,17 +39,12 @@ namespace WebAPI.Controllers
         [HttpPut("{nodeId:guid}/updateKey")]
         public async Task<ActionResult<NodeDTO>> UpdateNodeKey(Guid nodeId, [FromBody] string connectionKey)
         {
-            var node = await _nodeService.GetById(nodeId);
+            var updatedNode = await _nodeService.UpdateNodeConnectionKey(nodeId, connectionKey);
 
-            if (node == null)
+            if (updatedNode == null)
             {
                 return NotFound();
             }
-
-            // TODO: Remove client reference here, move implementation to NodeService
-            node.EncryptConnectionKey(_chyveClient.EncryptionKey, connectionKey);
-
-            var updatedNode = await _nodeService.Update(nodeId, node);
 
             return Ok(updatedNode);
         }
