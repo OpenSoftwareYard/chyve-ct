@@ -1,7 +1,5 @@
-using System;
 using System.ComponentModel;
 using System.Net;
-
 namespace Persistence.Entities;
 
 public enum ZoneStatus

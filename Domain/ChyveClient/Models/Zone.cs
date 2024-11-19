@@ -14,7 +14,7 @@ public record CappedCpu
 public record CappedMemory
 {
     [JsonPropertyName("physical")]
-    public string Physical { get; set; }
+    public required string Physical { get; set; }
 }
 
 public record Net
@@ -72,4 +72,7 @@ public record Zone
 
     [JsonPropertyName("zonepath")]
     public required string Path { get; set; }
+
+    [JsonPropertyName("resolvers")]
+    public List<string>? Resolvers { get; set; }
 }

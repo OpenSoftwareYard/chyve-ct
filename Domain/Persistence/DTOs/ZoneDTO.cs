@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using Persistence.Entities;
 
 namespace Persistence.DTOs;
@@ -11,5 +12,6 @@ public record class ZoneDTO
     public int DiskGB { get; set; }
     public Guid? NodeId { get; set; }
     public Guid OrganizationId { get; set; }
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public ZoneStatus Status { get; set; }
 }

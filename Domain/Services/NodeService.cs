@@ -69,7 +69,7 @@ namespace Services
                         new Net()
                         {
                             Physical = createdVnic.Link,
-                            AllowedAddress = $"{availableIpAddress.ToString()}/{selectedNode.PrivateZoneNetwork.PrefixLength}",
+                            AllowedAddress = $"{availableIpAddress}/{selectedNode.PrivateZoneNetwork.PrefixLength}",
                             DefRouter = selectedNode.DefRouter!.ToString(),
                         }
                     ],
@@ -78,6 +78,7 @@ namespace Services
                     LimitPriv = "",
                     Pool = "",
                     SchedulingClass = "",
+                    Resolvers = ["1.1.1.1", "1.0.0.1"],
                 };
 
                 _ = await _chyveClient.CreateZone(selectedNode, zoneToCreate);
