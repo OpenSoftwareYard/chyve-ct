@@ -18,7 +18,7 @@ public class Client(string encryptionKey, string projectPath)
         var key = await node.DecryptConnectionKey(EncryptionKey);
         var sshKeyStream = new MemoryStream(Encoding.UTF8.GetBytes(key));
 
-        using SshClient client = new(node.Address, node.ConnectionUser!, new PrivateKeyFile(sshKeyStream));
+        using SshClient client = new(node.Address, node.Port, node.ConnectionUser!, new PrivateKeyFile(sshKeyStream));
 
         var source = new CancellationTokenSource();
         await client.ConnectAsync(source.Token);
@@ -61,7 +61,7 @@ public class Client(string encryptionKey, string projectPath)
 
         var source = new CancellationTokenSource();
 
-        using SshClient client = new(node.Address, node.ConnectionUser!, new PrivateKeyFile(sshKeyStream));
+        using SshClient client = new(node.Address, node.Port, node.ConnectionUser!, new PrivateKeyFile(sshKeyStream));
 
         await client.ConnectAsync(source.Token);
 
@@ -89,7 +89,7 @@ public class Client(string encryptionKey, string projectPath)
 
         using var sftpKeyStream = new MemoryStream(Encoding.UTF8.GetBytes(key));
 
-        using (SftpClient sftpClient = new(node.Address, node.ConnectionUser!, new PrivateKeyFile(sftpKeyStream)))
+        using (SftpClient sftpClient = new(node.Address, node.Port, node.ConnectionUser!, new PrivateKeyFile(sftpKeyStream)))
         {
             await sftpClient.ConnectAsync(source.Token);
 
@@ -101,7 +101,7 @@ public class Client(string encryptionKey, string projectPath)
 
         using var sshKeyStream = new MemoryStream(Encoding.UTF8.GetBytes(key));
 
-        using SshClient client = new(node.Address, node.ConnectionUser!, new PrivateKeyFile(sshKeyStream));
+        using SshClient client = new(node.Address, node.Port, node.ConnectionUser!, new PrivateKeyFile(sshKeyStream));
 
         await client.ConnectAsync(source.Token);
 

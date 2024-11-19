@@ -15,8 +15,8 @@ using Persistence.Entities;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(ChyveContext))]
-    [Migration("20241107081302_AddPostgresEnum")]
-    partial class AddPostgresEnum
+    [Migration("20241119080720_ResetMigrations")]
+    partial class ResetMigrations
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -66,6 +66,9 @@ namespace Persistence.Migrations
                     b.Property<string>("InternalStubDevice")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<int>("Port")
+                        .HasColumnType("integer");
 
                     b.Property<string>("PrivateZoneNetwork")
                         .IsRequired()

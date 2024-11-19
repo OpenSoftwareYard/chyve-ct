@@ -17,6 +17,7 @@ services:
     ports:
       - "80"
       - "443"
+    restart: unless-stopped
   scheduler:
     image: ${DOCKER_REGISTRY-}scheduler
     build:

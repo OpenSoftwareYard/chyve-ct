@@ -9,6 +9,7 @@ public record class NodeDTO
 {
     public Guid Id { get; set; }
     public required string Address { get; set; }
+    public required int Port { get; set; }
     [JsonIgnore]
     public byte[]? ConnectionKey { get; set; }
     [JsonIgnore]

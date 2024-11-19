@@ -6,6 +6,7 @@ namespace Persistence.Entities;
 public class Node : BaseEntity
 {
     public required string Address { get; set; }
+    public required int Port { get; set; }
     public required byte[] ConnectionKey { get; set; }
     public required string ConnectionUser { get; set; }
     public required string ExternalNetworkDevice { get; set; }

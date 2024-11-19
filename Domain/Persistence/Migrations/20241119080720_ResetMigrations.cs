@@ -2,17 +2,21 @@
 using System.Collections.Generic;
 using System.Net;
 using Microsoft.EntityFrameworkCore.Migrations;
+using Persistence.Entities;
 
 #nullable disable
 
 namespace Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialCreate : Migration
+    public partial class ResetMigrations : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.AlterDatabase()
+                .Annotation("Npgsql:Enum:zone_status", "unscheduled,running,stopped,scheduling,scheduled");
+
             migrationBuilder.CreateSequence(
                 name: "EntityFrameworkHiLoSequence",
                 incrementBy: 10);
@@ -22,17 +26,22 @@ namespace Persistence.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    WebApiUri = table.Column<string>(type: "text", nullable: false),
-                    AccessToken = table.Column<string>(type: "text", nullable: false),
+                    Address = table.Column<string>(type: "text", nullable: false),
+                    Port = table.Column<int>(type: "integer", nullable: false),
+                    ConnectionKey = table.Column<byte[]>(type: "bytea", nullable: false),
+                    ConnectionUser = table.Column<string>(type: "text", nullable: false),
                     ExternalNetworkDevice = table.Column<string>(type: "text", nullable: false),
+                    InternalStubDevice = table.Column<string>(type: "text", nullable: false),
                     DefRouter = table.Column<IPAddress>(type: "inet", nullable: false),
                     PrivateZoneNetwork = table.Column<string>(type: "text", nullable: false),
+                    ZoneBasePath = table.Column<string>(type: "text", nullable: false),
                     TotalCpu = table.Column<int>(type: "integer", nullable: false),
                     UsedCpu = table.Column<int>(type: "integer", nullable: false),
                     TotalRamGB = table.Column<int>(type: "integer", nullable: false),
                     UsedRamGB = table.Column<int>(type: "integer", nullable: false),
                     TotalDiskGB = table.Column<int>(type: "integer", nullable: false),
-                    UsedDiskGB = table.Column<int>(type: "integer", nullable: false)
+                    UsedDiskGB = table.Column<int>(type: "integer", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
                 },
                 constraints: table =>
                 {
@@ -45,7 +54,8 @@ namespace Persistence.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    UserIds = table.Column<List<string>>(type: "text[]", nullable: false)
+                    UserIds = table.Column<List<string>>(type: "text[]", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
                 },
                 constraints: table =>
                 {
@@ -58,16 +68,18 @@ namespace Persistence.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
-                    Path = table.Column<string>(type: "text", nullable: false),
+                    Path = table.Column<string>(type: "text", nullable: true),
                     Brand = table.Column<string>(type: "text", nullable: false),
-                    IPType = table.Column<string>(type: "text", nullable: false),
-                    VNic = table.Column<string>(type: "text", nullable: false),
-                    InternalIPAddress = table.Column<IPAddress>(type: "inet", nullable: false),
+                    IPType = table.Column<string>(type: "text", nullable: true),
+                    VNic = table.Column<string>(type: "text", nullable: true),
+                    InternalIPAddress = table.Column<IPAddress>(type: "inet", nullable: true),
                     CpuCount = table.Column<int>(type: "integer", nullable: false),
                     RamGB = table.Column<int>(type: "integer", nullable: false),
                     DiskGB = table.Column<int>(type: "integer", nullable: false),
+                    Status = table.Column<ZoneStatus>(type: "zone_status", nullable: false),
                     OrganizationId = table.Column<Guid>(type: "uuid", nullable: false),
-                    NodeId = table.Column<Guid>(type: "uuid", nullable: false)
+                    NodeId = table.Column<Guid>(type: "uuid", nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
                 },
                 constraints: table =>
                 {
@@ -76,8 +88,7 @@ namespace Persistence.Migrations
                         name: "FK_Zones_Nodes_NodeId",
                         column: x => x.NodeId,
                         principalTable: "Nodes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "Id");
                     table.ForeignKey(
                         name: "FK_Zones_Organizations_OrganizationId",
                         column: x => x.OrganizationId,

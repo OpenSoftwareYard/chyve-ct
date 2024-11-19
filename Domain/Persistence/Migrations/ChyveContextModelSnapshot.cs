@@ -64,6 +64,9 @@ namespace Persistence.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("Port")
+                        .HasColumnType("integer");
+
                     b.Property<string>("PrivateZoneNetwork")
                         .IsRequired()
                         .HasColumnType("text");

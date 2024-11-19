@@ -21,10 +21,11 @@ public static class IPNetworkExtensions
         byte[] currentBytes = [.. firstAddressBytes];
         IncrementIPAddress(currentBytes);
         IncrementIPAddress(currentBytes);
+        IncrementIPAddress(currentBytes);
 
         while (CompareBytes(currentBytes, lastAddressBytes) < 0)
         {
-            IPAddress currentAddress = new IPAddress(currentBytes);
+            IPAddress currentAddress = new(currentBytes);
 
             if (!usedAddresses.Contains(currentAddress))
             {
