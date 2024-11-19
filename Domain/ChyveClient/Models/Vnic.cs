@@ -29,7 +29,7 @@ public record Vnic
         while (code > 0)
         {
             var t = code % baseNum;
-            code = code / baseNum;
+            code /= baseNum;
             result[i] = alphabet[(int)t];
             i++;
         }

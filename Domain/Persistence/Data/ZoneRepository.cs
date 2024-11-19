@@ -6,7 +6,7 @@ namespace Persistence.Data;
 
 public class ZoneRepository(ChyveContext context) : GenericRepository<Zone>(context), IZoneRepository
 {
-    public async Task<IEnumerable<Zone>?> GetForUserId(string userId)
+    public async Task<IEnumerable<Zone>?> GetZonesForUserId(string userId)
     {
         var organizations = await _context.Organizations.Where(o => o.UserIds.Contains(userId)).ToListAsync();
 
@@ -18,6 +18,25 @@ public class ZoneRepository(ChyveContext context) : GenericRepository<Zone>(cont
         return await _context.Zones
           .Where(z => organizations.Contains(z.Organization))
           .ToListAsync();
+    }
+
+    public async Task<Zone?> GetZoneForUserId(Guid zoneId, string userId)
+    {
+        var organizations = await _context.Organizations.Where(o => o.UserIds.Contains(userId)).ToListAsync();
+
+        if (organizations.Count == 0)
+        {
+            return null;
+        }
+
+        var zone = await GetById(zoneId);
+
+        if (zone == null || !organizations.Contains(zone.Organization))
+        {
+            return null;
+        }
+
+        return zone;
     }
 
     public async Task<Zone?> AddForUserId(Zone zone, string userId)

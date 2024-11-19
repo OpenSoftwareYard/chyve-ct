@@ -1,8 +1,6 @@
-using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using ChyveClient.Models;
-using Microsoft.VisualBasic.FileIO;
 using Persistence.DTOs;
 using Persistence.Entities;
 using Renci.SshNet;
@@ -16,9 +14,7 @@ public class Client(string encryptionKey, string projectPath)
     public async Task<IEnumerable<ZoneDTO>> GetZones(NodeDTO node)
     {
         var key = await node.DecryptConnectionKey(EncryptionKey);
-        var sshKeyStream = new MemoryStream(Encoding.UTF8.GetBytes(key));
-
-        using SshClient client = new(node.Address, node.Port, node.ConnectionUser!, new PrivateKeyFile(sshKeyStream));
+        using SshClient client = NewClient<SshClient>(node.Address, node.Port, node.ConnectionUser!, key);
 
         var source = new CancellationTokenSource();
         await client.ConnectAsync(source.Token);
@@ -54,14 +50,34 @@ public class Client(string encryptionKey, string projectPath)
         return zones;
     }
 
+    public async Task<Zone?> GetZone(NodeDTO node, string zoneId)
+    {
+        var key = await node.DecryptConnectionKey(EncryptionKey);
+        using SshClient client = NewClient<SshClient>(node.Address, node.Port, node.ConnectionUser!, key);
+
+        var source = new CancellationTokenSource();
+        await client.ConnectAsync(source.Token);
+
+        using var reader = new StreamReader($"{projectPath}/Scripts/GetZone.sh");
+        var getZoneScript = await reader.ReadToEndAsync(source.Token);
+
+        getZoneScript = getZoneScript.Replace("$1", zoneId);
+
+        using var cmd = client.RunCommand(getZoneScript);
+        Console.WriteLine(cmd.Result);
+        Console.WriteLine(cmd.Error);
+
+        var parsedZone = JsonSerializer.Deserialize<Zone>(cmd.Result);
+
+        return parsedZone;
+    }
+
     public async Task<Vnic> CreateVnic(NodeDTO node, Vnic vnic)
     {
         var key = await node.DecryptConnectionKey(EncryptionKey);
-        var sshKeyStream = new MemoryStream(Encoding.UTF8.GetBytes(key));
+        using SshClient client = NewClient<SshClient>(node.Address, node.Port, node.ConnectionUser!, key);
 
         var source = new CancellationTokenSource();
-
-        using SshClient client = new(node.Address, node.Port, node.ConnectionUser!, new PrivateKeyFile(sshKeyStream));
 
         await client.ConnectAsync(source.Token);
 
@@ -79,6 +95,27 @@ public class Client(string encryptionKey, string projectPath)
         return vnic;
     }
 
+    public async Task<string> DeleteVnic(NodeDTO node, string vnicName)
+    {
+        var key = await node.DecryptConnectionKey(EncryptionKey);
+        using SshClient client = NewClient<SshClient>(node.Address, node.Port, node.ConnectionUser!, key);
+
+        var source = new CancellationTokenSource();
+
+        await client.ConnectAsync(source.Token);
+
+        using var reader = new StreamReader($"{projectPath}/Scripts/DeleteVnic.sh");
+        var deleteVnicScript = await reader.ReadToEndAsync(source.Token);
+
+        deleteVnicScript = deleteVnicScript.Replace("$1", vnicName);
+
+        using var cmd = client.RunCommand(deleteVnicScript);
+        Console.WriteLine(cmd.Result);
+        Console.WriteLine(cmd.Error);
+
+        return vnicName;
+    }
+
     public async Task<Zone> CreateZone(NodeDTO node, Zone zone)
     {
         var key = await node.DecryptConnectionKey(EncryptionKey);
@@ -87,21 +124,15 @@ public class Client(string encryptionKey, string projectPath)
         var remotePath = $"/tmp/{zone.Name}.json";
         var source = new CancellationTokenSource();
 
-        using var sftpKeyStream = new MemoryStream(Encoding.UTF8.GetBytes(key));
-
-        using (SftpClient sftpClient = new(node.Address, node.Port, node.ConnectionUser!, new PrivateKeyFile(sftpKeyStream)))
+        using (SftpClient sftpClient = NewClient<SftpClient>(node.Address, node.Port, node.ConnectionUser!, key))
         {
             await sftpClient.ConnectAsync(source.Token);
 
-            await using (var remoteFile = sftpClient.AppendText(remotePath))
-            {
-                await remoteFile.WriteAsync(zoneJson);
-            }
+            await using var remoteFile = sftpClient.AppendText(remotePath);
+            await remoteFile.WriteAsync(zoneJson);
         }
 
-        using var sshKeyStream = new MemoryStream(Encoding.UTF8.GetBytes(key));
-
-        using SshClient client = new(node.Address, node.Port, node.ConnectionUser!, new PrivateKeyFile(sshKeyStream));
+        using SshClient client = NewClient<SshClient>(node.Address, node.Port, node.ConnectionUser!, key);
 
         await client.ConnectAsync(source.Token);
 
@@ -118,5 +149,98 @@ public class Client(string encryptionKey, string projectPath)
         Console.WriteLine(cmd.Error);
 
         return zone;
+    }
+
+    public async Task<Zone> BootZone(NodeDTO node, string zoneId)
+    {
+        var key = await node.DecryptConnectionKey(EncryptionKey);
+        using SshClient client = NewClient<SshClient>(node.Address, node.Port, node.ConnectionUser!, key);
+
+        var source = new CancellationTokenSource();
+
+        await client.ConnectAsync(source.Token);
+
+        using var reader = new StreamReader($"{projectPath}/Scripts/BootZone.sh");
+        var bootZoneScript = await reader.ReadToEndAsync(source.Token);
+
+        bootZoneScript = bootZoneScript.Replace("$1", zoneId);
+
+        using var cmd = client.RunCommand(bootZoneScript);
+        Console.WriteLine(cmd.Result);
+        Console.WriteLine(cmd.Error);
+
+        var zone = await GetZone(node, zoneId);
+
+        if (zone == null)
+        {
+            Console.WriteLine("Failed to retrieve zone details");
+        }
+
+        return zone!;
+    }
+
+    public async Task<Zone> StopZone(NodeDTO node, string zoneId)
+    {
+        var key = await node.DecryptConnectionKey(EncryptionKey);
+        using SshClient client = NewClient<SshClient>(node.Address, node.Port, node.ConnectionUser!, key);
+
+        var source = new CancellationTokenSource();
+
+        await client.ConnectAsync(source.Token);
+
+        using var reader = new StreamReader($"{projectPath}/Scripts/StopZone.sh");
+        var stopZoneScript = await reader.ReadToEndAsync(source.Token);
+
+        stopZoneScript = stopZoneScript.Replace("$1", zoneId);
+
+        using var cmd = client.RunCommand(stopZoneScript);
+        Console.WriteLine(cmd.Result);
+        Console.WriteLine(cmd.Error);
+
+        var zone = await GetZone(node, zoneId);
+
+        if (zone == null)
+        {
+            Console.WriteLine("Failed to retrieve zone details");
+        }
+
+        return zone!;
+    }
+
+    public async Task<Zone> DeleteZone(NodeDTO node, string zoneId)
+    {
+        await StopZone(node, zoneId);
+
+        var zone = await GetZone(node, zoneId);
+
+        if (zone == null)
+        {
+            Console.WriteLine("Failed to retrieve zone details");
+        }
+
+        var key = await node.DecryptConnectionKey(EncryptionKey);
+        using SshClient client = NewClient<SshClient>(node.Address, node.Port, node.ConnectionUser!, key);
+
+        var source = new CancellationTokenSource();
+
+        await client.ConnectAsync(source.Token);
+
+        using var reader = new StreamReader($"{projectPath}/Scripts/DeleteZone.sh");
+        var deleteZoneScript = await reader.ReadToEndAsync(source.Token);
+
+        deleteZoneScript = deleteZoneScript.Replace("$1", zoneId);
+
+        using var cmd = client.RunCommand(deleteZoneScript);
+        Console.WriteLine(cmd.Result);
+        Console.WriteLine(cmd.Error);
+
+        return zone!;
+    }
+
+    private static T NewClient<T>(string host, int port, string user, string key) where T : BaseClient
+    {
+        var sshKeyStream = new MemoryStream(Encoding.UTF8.GetBytes(key));
+
+        return (T)Activator.CreateInstance(typeof(T), [host, port, user, new PrivateKeyFile(sshKeyStream)])!;
     }
 }

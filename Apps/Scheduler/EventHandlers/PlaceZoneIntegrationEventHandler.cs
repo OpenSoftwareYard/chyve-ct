@@ -34,7 +34,7 @@ public class PlaceZoneHandler(ILogger<PlaceZoneHandler> logger, INodeService nod
             _logger.LogInformation("Selected node {nodeId} for zone {zoneId}", selectedNode.Id, zone.Id);
 
             zone.NodeId = selectedNode.Id;
-            zone.Status = ZoneStatus.RUNNING;
+            zone.Status = ZoneStatus.SCHEDULED;
 
             await _zoneService.Update(zone.Id, zone);
         }
