@@ -26,10 +26,10 @@ IHost host = Host.CreateDefaultBuilder(args)
 
         services.AddDbContext<ChyveContext>(options =>
             options.UseNpgsql(dataSource),
-            ServiceLifetime.Transient, ServiceLifetime.Transient
+            ServiceLifetime.Scoped, ServiceLifetime.Scoped
         );
 
-        services.AddScoped<ChyveClient.Client>(sp =>
+        services.AddScoped<Client>(sp =>
         {
             var projectPath = Path.GetDirectoryName(typeof(Program).Assembly.Location);
             return new Client(host.Configuration["PrivateKey"]!, projectPath!);

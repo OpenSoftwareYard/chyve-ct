@@ -1,3 +1,4 @@
+using System.Net;
 using System.Text.Json.Serialization;
 using Persistence.Entities;
 
@@ -14,4 +15,14 @@ public record class ZoneDTO
     public Guid OrganizationId { get; set; }
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public ZoneStatus Status { get; set; }
+    [JsonIgnore]
+    public string? Path { get; set; }
+    [JsonIgnore]
+    public IPAddress? InternalIPAddress { get; set; }
+    [JsonIgnore]
+    public string? VNic { get; set; }
+    [JsonIgnore]
+    public string? IPType { get; set; }
+    [JsonIgnore]
+    public string? Brand { get; set; }
 }

@@ -15,11 +15,11 @@ public record class NodeDTO
     [JsonIgnore]
     public string? ConnectionUser { get; set; }
     public int TotalCpu { get; set; }
-    public int UsedCpu { get; set; }
+    public int? UsedCpu { get; set; }
     public int TotalRamGB { get; set; }
-    public int UsedRamGB { get; set; }
+    public int? UsedRamGB { get; set; }
     public int TotalDiskGB { get; set; }
-    public int UsedDiskGB { get; set; }
+    public int? UsedDiskGB { get; set; }
     public required List<ZoneDTO> Zones { get; set; }
     [JsonIgnore]
     public IPNetwork PrivateZoneNetwork { get; set; }

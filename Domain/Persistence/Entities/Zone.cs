@@ -15,7 +15,7 @@ public class Zone : BaseEntity
 {
     public required string Name { get; set; }
     public string? Path { get; set; }
-    public required string Brand { get; set; }
+    public string? Brand { get; set; }
     public string? IPType { get; set; }
     public string? VNic { get; set; }
     public IPAddress? InternalIPAddress { get; set; }

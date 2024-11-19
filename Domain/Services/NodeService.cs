@@ -5,8 +5,8 @@ using Persistence.Entities;
 using static SchedulerCore.SchedulerCore;
 using System.Collections.Immutable;
 using ChyveClient.Models;
-using Polly;
 using SchedulerCore;
+using System.Net;
 
 namespace Services
 {
@@ -15,12 +15,12 @@ namespace Services
         private readonly INodeRepository _nodeRepository = repository;
         private readonly ChyveClient.Client _chyveClient = chyveClient;
 
-        public async Task<NodeDTO> AllocateZoneToOptimalNode(ZoneDTO zone)
+        public async Task<AllocateZoneResponse> AllocateZoneToOptimalNode(ZoneDTO zone)
         {
             await _repository.BeginTransaction();
             try
             {
-                var nodes = await GetAll() ?? throw new Exception("No nodes configured to schedule zones");
+                var nodes = await GetAllWithUsage() ?? throw new Exception("No nodes configured to schedule zones");
 
                 var selectedNode = nodes
                     .Where(node => FilterNode(node, zone))
@@ -48,14 +48,18 @@ namespace Services
 
                 var createdVnic = await _chyveClient.CreateVnic(selectedNode, vnic);
 
+                var zonePath = $"{selectedNode.ZoneBasePath}/{zone.Id}";
+                var brand = "pkgsrc";
+                var ipType = "exclusive";
+
                 var zoneToCreate = new ChyveClient.Models.Zone
                 {
                     Autoboot = "false",
                     BootArgs = "",
                     Name = zone.Id.ToString(),
-                    Path = $"{selectedNode.ZoneBasePath}/{zone.Id}",
-                    Brand = "pkgsrc",
-                    IPType = "exclusive",
+                    Path = zonePath,
+                    Brand = brand,
+                    IPType = ipType,
                     CappedCpu = new CappedCpu()
                     {
                         Ncpus = zone.CpuCount,
@@ -83,16 +87,42 @@ namespace Services
 
                 _ = await _chyveClient.CreateZone(selectedNode, zoneToCreate);
 
-                await Update(selectedNode.Id, selectedNode);
-
                 await _repository.CommitTransaction();
-                return selectedNode;
+                return new AllocateZoneResponse
+                {
+                    Node = selectedNode,
+                    IpAddress = availableIpAddress,
+                    VnicName = createdVnic.Link,
+                    Path = zonePath,
+                    Brand = brand,
+                    IPType = ipType,
+                };
             }
             catch
             {
                 await _repository.RollbackTransaction();
                 throw;
             }
+        }
+
+        public async Task<IEnumerable<NodeDTO>> GetAllWithUsage()
+        {
+            var nodes = await _nodeRepository.GetAll();
+            var nodesWithCPU = await Task.WhenAll(
+                nodes.Select(async n =>
+                {
+                    var nodeDTO = _mapper.Map<NodeDTO>(n);
+
+                    return nodeDTO with
+                    {
+                        UsedCpu = await _nodeRepository.GetUsedCPU(n),
+                        UsedRamGB = await _nodeRepository.GetUsedRAM(n),
+                        UsedDiskGB = await _nodeRepository.GetUsedDisk(n),
+                    };
+                })
+            );
+
+            return nodesWithCPU;
         }
 
         public async Task<NodeDTO?> UpdateNodeConnectionKey(Guid nodeId, string connectionKey)
@@ -110,5 +140,15 @@ namespace Services
 
             return updatedNode;
         }
+    }
+
+    public record AllocateZoneResponse
+    {
+        public required NodeDTO Node { get; set; }
+        public required IPAddress IpAddress { get; set; }
+        public required string VnicName { get; set; }
+        public required string Path { get; set; }
+        public required string Brand { get; set; }
+        public required string IPType { get; set; }
     }
 }
