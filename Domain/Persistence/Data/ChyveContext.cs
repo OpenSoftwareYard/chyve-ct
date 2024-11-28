@@ -7,9 +7,9 @@ namespace Persistence.Data;
 
 public class ChyveContext : DbContext
 {
-    public virtual DbSet<Organization> Organizations { get; set; }
-    public virtual DbSet<Node> Nodes { get; set; }
-    public virtual DbSet<Zone> Zones { get; set; }
+    public required virtual DbSet<Organization> Organizations { get; set; }
+    public required virtual DbSet<Node> Nodes { get; set; }
+    public required virtual DbSet<Zone> Zones { get; set; }
 
     public ChyveContext(DbContextOptions<ChyveContext> options) : base(options) { }
 
@@ -18,8 +18,6 @@ public class ChyveContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.UseHiLo();
-
-        modelBuilder.HasPostgresEnum<ZoneStatus>();
 
         modelBuilder.Entity<Node>()
                 .Property(e => e.PrivateZoneNetwork)

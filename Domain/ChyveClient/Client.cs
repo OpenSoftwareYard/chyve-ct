@@ -22,7 +22,11 @@ public class Client(string encryptionKey, string projectPath)
         var zones = new List<ZoneDTO>();
 
         using var reader = new StreamReader($"{projectPath}/Scripts/GetZones.sh");
-        using var cmd = client.RunCommand(await reader.ReadToEndAsync(source.Token));
+
+        var command = await reader.ReadToEndAsync(source.Token);
+        command = command.ReplaceLineEndings("\n");
+
+        using var cmd = client.RunCommand(command);
         Console.WriteLine(cmd.Result);
 
         var parsedZones = JsonSerializer.Deserialize<IDictionary<string, Zone>>(cmd.Result)?.Values ?? [];
@@ -61,7 +65,9 @@ public class Client(string encryptionKey, string projectPath)
         using var reader = new StreamReader($"{projectPath}/Scripts/GetZone.sh");
         var getZoneScript = await reader.ReadToEndAsync(source.Token);
 
-        getZoneScript = getZoneScript.Replace("$1", zoneId);
+        getZoneScript = getZoneScript
+            .Replace("$1", zoneId)
+            .ReplaceLineEndings("\n");
 
         using var cmd = client.RunCommand(getZoneScript);
         Console.WriteLine(cmd.Result);
@@ -86,7 +92,8 @@ public class Client(string encryptionKey, string projectPath)
 
         createVnicScript = createVnicScript
             .Replace("$1", vnic.Over)
-            .Replace("$2", vnic.Link);
+            .Replace("$2", vnic.Link)
+            .ReplaceLineEndings("\n");
 
         using var cmd = client.RunCommand(createVnicScript);
         Console.WriteLine(cmd.Result);
@@ -107,7 +114,9 @@ public class Client(string encryptionKey, string projectPath)
         using var reader = new StreamReader($"{projectPath}/Scripts/DeleteVnic.sh");
         var deleteVnicScript = await reader.ReadToEndAsync(source.Token);
 
-        deleteVnicScript = deleteVnicScript.Replace("$1", vnicName);
+        deleteVnicScript = deleteVnicScript
+            .Replace("$1", vnicName)
+            .ReplaceLineEndings("\n");
 
         using var cmd = client.RunCommand(deleteVnicScript);
         Console.WriteLine(cmd.Result);
@@ -142,7 +151,8 @@ public class Client(string encryptionKey, string projectPath)
         createZoneScript = createZoneScript
             .Replace("$1", zone.Brand)
             .Replace("$2", zone.Name)
-            .Replace("$3", remotePath);
+            .Replace("$3", remotePath)
+            .ReplaceLineEndings("\n");
 
         using var cmd = client.RunCommand(createZoneScript);
         Console.WriteLine(cmd.Result);
@@ -163,7 +173,9 @@ public class Client(string encryptionKey, string projectPath)
         using var reader = new StreamReader($"{projectPath}/Scripts/BootZone.sh");
         var bootZoneScript = await reader.ReadToEndAsync(source.Token);
 
-        bootZoneScript = bootZoneScript.Replace("$1", zoneId);
+        bootZoneScript = bootZoneScript
+            .Replace("$1", zoneId)
+            .ReplaceLineEndings("\n");
 
         using var cmd = client.RunCommand(bootZoneScript);
         Console.WriteLine(cmd.Result);
@@ -191,7 +203,9 @@ public class Client(string encryptionKey, string projectPath)
         using var reader = new StreamReader($"{projectPath}/Scripts/StopZone.sh");
         var stopZoneScript = await reader.ReadToEndAsync(source.Token);
 
-        stopZoneScript = stopZoneScript.Replace("$1", zoneId);
+        stopZoneScript = stopZoneScript
+            .Replace("$1", zoneId)
+            .ReplaceLineEndings("\n");
 
         using var cmd = client.RunCommand(stopZoneScript);
         Console.WriteLine(cmd.Result);
@@ -228,7 +242,9 @@ public class Client(string encryptionKey, string projectPath)
         using var reader = new StreamReader($"{projectPath}/Scripts/DeleteZone.sh");
         var deleteZoneScript = await reader.ReadToEndAsync(source.Token);
 
-        deleteZoneScript = deleteZoneScript.Replace("$1", zoneId);
+        deleteZoneScript = deleteZoneScript
+            .Replace("$1", zoneId)
+            .ReplaceLineEndings("\n");
 
         using var cmd = client.RunCommand(deleteZoneScript);
         Console.WriteLine(cmd.Result);

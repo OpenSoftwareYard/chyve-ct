@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Net;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Persistence.Data;
@@ -14,16 +15,18 @@ using Persistence.Entities;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(ChyveContext))]
-    partial class ChyveContextModelSnapshot : ModelSnapshot
+    [Migration("20241128131005_UpgradeDotnetVersion")]
+    partial class UpgradeDotnetVersion
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
                 .HasAnnotation("ProductVersion", "9.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "zone_status", new[] { "unscheduled", "running", "stopped", "scheduling", "scheduled" });
+            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "zone_status", new[] { "running", "scheduled", "scheduling", "stopped", "unscheduled" });
             NpgsqlModelBuilderExtensions.UseHiLo(modelBuilder, "EntityFrameworkHiLoSequence");
 
             modelBuilder.HasSequence("EntityFrameworkHiLoSequence")

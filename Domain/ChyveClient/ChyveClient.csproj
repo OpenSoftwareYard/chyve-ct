@@ -1,14 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
   <ItemGroup>
     <ProjectReference Include="..\Persistence\Persistence.csproj" />
   </ItemGroup>
-
   <ItemGroup>
-    <PackageReference Include="Microsoft.Net.Http.Headers" Version="8.0.10" />
-    <PackageReference Include="SSH.NET" Version="2024.1.0" />
+    <PackageReference Include="Microsoft.Net.Http.Headers" Version="9.0.0" />
+    <PackageReference Include="SSH.NET" Version="2024.2.0" />
   </ItemGroup>
-
   <ItemGroup>
     <None Update="Scripts\GetZones.sh">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -35,11 +32,9 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+    <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
   </PropertyGroup>
-
 </Project>

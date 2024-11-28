@@ -20,12 +20,12 @@ IHost host = Host.CreateDefaultBuilder(args)
     .ConfigureServices((host, services) =>
     {
         services.AddHostedService<Worker>();
-        var dataSourceBuilder = new NpgsqlDataSourceBuilder(host.Configuration["ConnectionString"]);
-        dataSourceBuilder.MapEnum<ZoneStatus>();
-        var dataSource = dataSourceBuilder.Build();
 
         services.AddDbContext<ChyveContext>(options =>
-            options.UseNpgsql(dataSource),
+            options.UseNpgsql(
+                host.Configuration["ConnectionString"],
+                o => o.MapEnum<ZoneStatus>("zone_status")
+            ),
             ServiceLifetime.Scoped, ServiceLifetime.Scoped
         );
 

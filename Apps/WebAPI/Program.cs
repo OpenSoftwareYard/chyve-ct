@@ -41,12 +41,11 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-var dataSourceBuilder = new NpgsqlDataSourceBuilder(builder.Configuration["ConnectionString"] ?? "Host=localhost;Database=postgres;Username=postgres;Password=root;Include Error Detail=true");
-dataSourceBuilder.MapEnum<ZoneStatus>();
-var dataSource = dataSourceBuilder.Build();
-
 builder.Services.AddDbContext<ChyveContext>(options =>
-    options.UseNpgsql(dataSource)
+    options.UseNpgsql(
+        builder.Configuration["ConnectionString"] ?? "Host=localhost;Database=postgres;Username=postgres;Password=root;Include Error Detail=true",
+        o => o.MapEnum<ZoneStatus>("zone_status")
+    )
 );
 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
