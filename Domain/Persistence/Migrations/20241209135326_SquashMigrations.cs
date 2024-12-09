@@ -9,13 +9,13 @@ using Persistence.Entities;
 namespace Persistence.Migrations
 {
     /// <inheritdoc />
-    public partial class ResetMigrations : Migration
+    public partial class SquashMigrations : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterDatabase()
-                .Annotation("Npgsql:Enum:zone_status", "unscheduled,running,stopped,scheduling,scheduled");
+                .Annotation("Npgsql:Enum:zone_status", "running,scheduled,scheduling,stopped,unscheduled");
 
             migrationBuilder.CreateSequence(
                 name: "EntityFrameworkHiLoSequence",
@@ -36,11 +36,8 @@ namespace Persistence.Migrations
                     PrivateZoneNetwork = table.Column<string>(type: "text", nullable: false),
                     ZoneBasePath = table.Column<string>(type: "text", nullable: false),
                     TotalCpu = table.Column<int>(type: "integer", nullable: false),
-                    UsedCpu = table.Column<int>(type: "integer", nullable: false),
                     TotalRamGB = table.Column<int>(type: "integer", nullable: false),
-                    UsedRamGB = table.Column<int>(type: "integer", nullable: false),
                     TotalDiskGB = table.Column<int>(type: "integer", nullable: false),
-                    UsedDiskGB = table.Column<int>(type: "integer", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false, defaultValueSql: "now()")
                 },
                 constraints: table =>
@@ -69,7 +66,7 @@ namespace Persistence.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Name = table.Column<string>(type: "text", nullable: false),
                     Path = table.Column<string>(type: "text", nullable: true),
-                    Brand = table.Column<string>(type: "text", nullable: false),
+                    Brand = table.Column<string>(type: "text", nullable: true),
                     IPType = table.Column<string>(type: "text", nullable: true),
                     VNic = table.Column<string>(type: "text", nullable: true),
                     InternalIPAddress = table.Column<IPAddress>(type: "inet", nullable: true),

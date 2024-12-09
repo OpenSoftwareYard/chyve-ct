@@ -15,8 +15,8 @@ using Persistence.Entities;
 namespace Persistence.Migrations
 {
     [DbContext(typeof(ChyveContext))]
-    [Migration("20241128131005_UpgradeDotnetVersion")]
-    partial class UpgradeDotnetVersion
+    [Migration("20241209135326_SquashMigrations")]
+    partial class SquashMigrations
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

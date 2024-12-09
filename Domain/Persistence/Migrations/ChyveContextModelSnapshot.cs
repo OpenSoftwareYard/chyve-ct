@@ -23,7 +23,7 @@ namespace Persistence.Migrations
                 .HasAnnotation("ProductVersion", "9.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
-            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "zone_status", new[] { "unscheduled", "running", "stopped", "scheduling", "scheduled" });
+            NpgsqlModelBuilderExtensions.HasPostgresEnum(modelBuilder, "zone_status", new[] { "running", "scheduled", "scheduling", "stopped", "unscheduled" });
             NpgsqlModelBuilderExtensions.UseHiLo(modelBuilder, "EntityFrameworkHiLoSequence");
 
             modelBuilder.HasSequence("EntityFrameworkHiLoSequence")
