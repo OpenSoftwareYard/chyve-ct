@@ -17,15 +17,15 @@ jobs:
       matrix:
         include:
           - dockerfile: ./Apps/WebAPI/Dockerfile
-            image: ghcr.io/OpenSoftwareYard/chyve-ct-webapi
+            image: ghcr.io/opensoftwareyard/chyve-ct-webapi
             context: .
             service: webapi
           - dockerfile: ./Apps/Scheduler/Dockerfile
-            image: ghcr.io/OpenSoftwareYard/chyve-ct-scheduler
+            image: ghcr.io/opensoftwareyard/chyve-ct-scheduler
             context: .
             service: scheduler
           - dockerfile: ./BuildingBlocks/ApiGateway/Dockerfile
-            image: ghcr.io/OpenSoftwareYard/chyve-ct-apigw
+            image: ghcr.io/opensoftwareyard/chyve-ct-apigw
             context: .
             service: apigw
     steps:
