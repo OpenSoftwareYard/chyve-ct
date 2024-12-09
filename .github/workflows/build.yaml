@@ -47,7 +47,9 @@ jobs:
           context: ${{ matrix.context }}
           file: ${{ matrix.dockerfile }}
           push: true
-          tags: "${{matrix.image}}:${{ github.sha }}"
+          tags: |
+            ${{matrix.image}}:${{ github.sha }}
+            ${{matrix.image}}:latest
           labels: ${{ steps.meta.outputs.labels }}
       - name: Set tags
         id: output
