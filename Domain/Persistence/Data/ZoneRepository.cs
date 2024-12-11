@@ -64,4 +64,52 @@ public class ZoneRepository(ChyveContext context) : GenericRepository<Zone>(cont
         var zones = await _context.Zones.Where(z => z.NodeId == null && z.Status == ZoneStatus.UNSCHEDULED).OrderBy(z => z.CreatedAt).ToListAsync();
         return zones;
     }
+
+    public async Task<IEnumerable<Zone>?> GetZonesForOrgId(string orgId)
+    {
+        var organization = await _context.Organizations.FindAsync(Guid.Parse(orgId));
+        if (organization == null)
+        {
+            return null;
+        }
+
+        return await _context.Zones
+          .Where(z => z.OrganizationId == organization.Id)
+          .ToListAsync();
+    }
+
+    public async Task<Zone?> GetZoneForOrgId(Guid zoneId, string orgId)
+    {
+        var organization = await _context.Organizations.FindAsync(Guid.Parse(orgId));
+        if (organization == null)
+        {
+            return null;
+        }
+
+        var zone = await GetById(zoneId);
+
+        if (zone == null || zone.OrganizationId != organization.Id)
+        {
+            return null;
+        }
+
+        return zone;
+    }
+
+    public async Task<Zone?> AddForOrgId(Zone zone, string orgId)
+    {
+        var organization = await _context.Organizations.FindAsync(Guid.Parse(orgId));
+
+        if (organization == null)
+        {
+            return null;
+        }
+
+        zone.Organization = organization;
+        zone.OrganizationId = zone.Organization.Id;
+
+        Console.WriteLine("Using final zone {0}", zone);
+
+        return await Add(zone);
+    }
 }

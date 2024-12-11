@@ -29,6 +29,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SchedulerCore", "Domain\Sch
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChyveClient", "Domain\ChyveClient\ChyveClient.csproj", "{904B4895-AB3B-4BE8-AE63-194015F609D9}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{45AB3DDE-4E52-469A-B56C-22AB4529263D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Security", "Infrastructure\Security\Security.csproj", "{153BC0CA-EEB1-42E8-A7EA-8C694EE88BD2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,6 +79,10 @@ Global
 		{904B4895-AB3B-4BE8-AE63-194015F609D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{904B4895-AB3B-4BE8-AE63-194015F609D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{904B4895-AB3B-4BE8-AE63-194015F609D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{153BC0CA-EEB1-42E8-A7EA-8C694EE88BD2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{153BC0CA-EEB1-42E8-A7EA-8C694EE88BD2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{153BC0CA-EEB1-42E8-A7EA-8C694EE88BD2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{153BC0CA-EEB1-42E8-A7EA-8C694EE88BD2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -89,6 +97,7 @@ Global
 		{7900D8FF-7994-4C2A-B86E-93A584F09F70} = {747FF763-45F3-43EF-B0F7-4353AAA74C06}
 		{D6C9F57A-618C-4F09-B450-E0EDA6562127} = {747FF763-45F3-43EF-B0F7-4353AAA74C06}
 		{904B4895-AB3B-4BE8-AE63-194015F609D9} = {747FF763-45F3-43EF-B0F7-4353AAA74C06}
+		{153BC0CA-EEB1-42E8-A7EA-8C694EE88BD2} = {45AB3DDE-4E52-469A-B56C-22AB4529263D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3B3C3FE5-66A5-497A-BF3D-6BCA5ADB8B4F}

@@ -74,4 +74,23 @@ public class ZoneService(IZoneRepository repository, IMapper mapper, ChyveClient
 
         return updatedZone;
     }
+
+    public async Task<IEnumerable<ZoneDTO>?> GetZonesForOrgId(string orgId)
+    {
+        var zones = await _zoneRepository.GetZonesForOrgId(orgId);
+        return _mapper.Map<IEnumerable<ZoneDTO>>(zones);
+    }
+
+    public async Task<ZoneDTO?> GetZoneForOrgId(Guid zoneId, string orgId)
+    {
+        var zone = await _zoneRepository.GetZoneForOrgId(zoneId, orgId);
+        return _mapper.Map<ZoneDTO>(zone);
+    }
+
+    public async Task<ZoneDTO?> CreateForOrgId(ZoneDTO zone, string orgId)
+    {
+        var zoneToAdd = _mapper.Map<Zone>(zone);
+        var addedZone = await _zoneRepository.AddForOrgId(zoneToAdd, orgId);
+        return _mapper.Map<ZoneDTO>(addedZone);
+    }
 }

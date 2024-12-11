@@ -10,5 +10,8 @@ public class MappingProfile : Profile
     {
         CreateMap<Node, NodeDTO>().ReverseMap();
         CreateMap<Zone, ZoneDTO>().ReverseMap();
+        CreateMap<PersonalAccessToken, PatDetailsDTO>().ReverseMap();
+        CreateMap<PersonalAccessTokenScope, PatScopeDTO>().ReverseMap();
+        CreateMap<Organization, OrganizationDTO>().ReverseMap();
     }
 }

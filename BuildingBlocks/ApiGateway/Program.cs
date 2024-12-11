@@ -1,6 +1,13 @@
+using ApiGateway.Authentication;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
+using Persistence.Data;
+using Persistence.DTOs;
+using Security;
+using Services;
 using System.IdentityModel.Tokens.Jwt;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -25,7 +32,19 @@ builder.Services.AddAuthentication(options =>
     options.Authority = "https://chyve-dev.eu.auth0.com/";
     options.Audience = "https://chyve-ct.opensoftwareyard.com";
     options.MapInboundClaims = false;
-});
+}).AddScheme<AuthenticationSchemeOptions, PatAuthenticationHandler>("PAT", _ => { });
+
+builder.Services.AddScoped<ITokenGenerator, TokenGenerator>();
+builder.Services.AddScoped<IPatRepository, PatRepository>();
+builder.Services.AddScoped<IPatService, PatService>();
+builder.Services.AddDbContext<ChyveContext>(options =>
+    options.UseNpgsql(
+        builder.Configuration["ConnectionString"] ?? "Host=localhost;Database=postgres;Username=postgres;Password=root;Include Error Detail=true"
+    )
+);
+
+builder.Services.AddAutoMapper(typeof(MappingProfile));
+
 
 builder.Services.AddOcelot();
 builder.Services.AddSwaggerForOcelot(builder.Configuration);

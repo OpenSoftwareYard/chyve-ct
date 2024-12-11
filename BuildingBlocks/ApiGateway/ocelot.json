@@ -13,11 +13,12 @@
       "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
       "SwaggerKey": "webapi",
       "AuthenticationOptions": {
-        "AuthenticationProviderKey": "chyve-key",
+        "AuthenticationProviderKeys": ["chyve-key", "PAT"],
         "AllowedScopes": []
       },
       "AddHeadersToRequest": {
-          "UserId": "Claims[sub] > value[1] > |"
+          "UserId": "Claims[sub] > value[1] > |",
+          "UserType": "Claims[sub] > value[0] > |"
       }
     }
   ],

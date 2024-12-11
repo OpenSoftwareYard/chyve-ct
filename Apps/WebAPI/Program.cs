@@ -5,6 +5,7 @@ using Npgsql;
 using Persistence.Data;
 using Persistence.DTOs;
 using Persistence.Entities;
+using Security;
 using Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -59,6 +60,11 @@ builder.Services.AddScoped<IZoneRepository, ZoneRepository>();
 builder.Services.AddScoped<IZoneService, ZoneService>();
 builder.Services.AddScoped<INodeRepository, NodeRepository>();
 builder.Services.AddScoped<INodeService, NodeService>();
+builder.Services.AddScoped<ITokenGenerator, TokenGenerator>();
+builder.Services.AddScoped<IPatRepository, PatRepository>();
+builder.Services.AddScoped<IPatService, PatService>();
+builder.Services.AddScoped<IGenericRepository<Organization>, GenericRepository<Organization>>();
+builder.Services.AddScoped<IGenericService<Organization, OrganizationDTO>, GenericService<Organization, OrganizationDTO>>();
 
 builder.Services.AddHealthChecks();
 

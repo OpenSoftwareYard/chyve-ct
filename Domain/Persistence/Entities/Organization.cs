@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Persistence.Entities
+﻿namespace Persistence.Entities
 {
     public class Organization : BaseEntity
     {
@@ -12,5 +6,6 @@ namespace Persistence.Entities
 
         public required List<string> UserIds { get; set; }
         public required List<Zone> Zones { get; set; }
+        public required List<PersonalAccessToken> PersonalAccessTokens { get; set; }
     }
 }

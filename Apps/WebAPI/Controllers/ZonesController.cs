@@ -14,12 +14,21 @@ namespace WebAPI.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ZoneDTO>>> GetZones()
         {
-            if (!Request.Headers.TryGetValue("UserId", out var userId))
+            if (!Request.Headers.TryGetValue("UserId", out var userId) || !Request.Headers.TryGetValue("UserType", out var userType))
             {
                 return Unauthorized();
             }
 
-            var zones = await _zoneService.GetZonesForUserId(userId!);
+            IEnumerable<ZoneDTO>? zones;
+
+            if (userType == "org")
+            {
+                zones = await _zoneService.GetZonesForOrgId(userId!);
+            }
+            else
+            {
+                zones = await _zoneService.GetZonesForUserId(userId!);
+            }
 
             if (zones == null)
             {
@@ -32,12 +41,21 @@ namespace WebAPI.Controllers
         [HttpPost]
         public async Task<ActionResult<ZoneDTO>> CreateZone([FromBody] ZoneDTO zone)
         {
-            if (!Request.Headers.TryGetValue("UserId", out var userId))
+            if (!Request.Headers.TryGetValue("UserId", out var userId) || !Request.Headers.TryGetValue("UserType", out var userType))
             {
                 return Unauthorized();
             }
 
-            var createdZone = await _zoneService.CreateForUserId(zone, userId!);
+            ZoneDTO? createdZone;
+
+            if (userType == "org")
+            {
+                createdZone = await _zoneService.CreateForOrgId(zone, userId!);
+            }
+            else
+            {
+                createdZone = await _zoneService.CreateForUserId(zone, userId!);
+            }
 
             if (createdZone == null)
             {
@@ -50,12 +68,21 @@ namespace WebAPI.Controllers
         [HttpPost("{zoneId}/start")]
         public async Task<ActionResult<ZoneDTO>> StartZone(Guid zoneId)
         {
-            if (!Request.Headers.TryGetValue("UserId", out var userId))
+            if (!Request.Headers.TryGetValue("UserId", out var userId) || !Request.Headers.TryGetValue("UserType", out var userType))
             {
                 return Unauthorized();
             }
 
-            var zone = await _zoneService.GetZoneForUserId(zoneId, userId!);
+            ZoneDTO? zone;
+
+            if (userType == "org")
+            {
+                zone = await _zoneService.GetZoneForOrgId(zoneId, userId!);
+            }
+            else
+            {
+                zone = await _zoneService.GetZoneForUserId(zoneId, userId!);
+            }
 
             if (zone == null || zone.NodeId == null)
             {
@@ -77,12 +104,21 @@ namespace WebAPI.Controllers
         [HttpPost("{zoneId}/stop")]
         public async Task<ActionResult<ZoneDTO>> StopZone(Guid zoneId)
         {
-            if (!Request.Headers.TryGetValue("UserId", out var userId))
+            if (!Request.Headers.TryGetValue("UserId", out var userId) || !Request.Headers.TryGetValue("UserType", out var userType))
             {
                 return Unauthorized();
             }
 
-            var zone = await _zoneService.GetZoneForUserId(zoneId, userId!);
+            ZoneDTO? zone;
+
+            if (userType == "org")
+            {
+                zone = await _zoneService.GetZoneForOrgId(zoneId, userId!);
+            }
+            else
+            {
+                zone = await _zoneService.GetZoneForUserId(zoneId, userId!);
+            }
 
             if (zone == null || zone.NodeId == null)
             {
@@ -104,12 +140,21 @@ namespace WebAPI.Controllers
         [HttpDelete("{zoneId}")]
         public async Task<ActionResult<ZoneDTO>> DeleteZone(Guid zoneId)
         {
-            if (!Request.Headers.TryGetValue("UserId", out var userId))
+            if (!Request.Headers.TryGetValue("UserId", out var userId) || !Request.Headers.TryGetValue("UserType", out var userType))
             {
                 return Unauthorized();
             }
 
-            var zone = await _zoneService.GetZoneForUserId(zoneId, userId!);
+            ZoneDTO? zone;
+
+            if (userType == "org")
+            {
+                zone = await _zoneService.GetZoneForOrgId(zoneId, userId!);
+            }
+            else
+            {
+                zone = await _zoneService.GetZoneForUserId(zoneId, userId!);
+            }
 
             if (zone == null || zone.NodeId == null)
             {

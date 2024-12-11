@@ -10,6 +10,8 @@ public class ChyveContext : DbContext
     public required virtual DbSet<Organization> Organizations { get; set; }
     public required virtual DbSet<Node> Nodes { get; set; }
     public required virtual DbSet<Zone> Zones { get; set; }
+    public required virtual DbSet<PersonalAccessToken> PersonalAccessTokens { get; set; }
+    public required virtual DbSet<PersonalAccessTokenScope> PersonalAccessTokenScopes { get; set; }
 
     public ChyveContext(DbContextOptions<ChyveContext> options) : base(options) { }
 

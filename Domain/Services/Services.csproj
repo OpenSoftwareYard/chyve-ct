@@ -3,6 +3,7 @@
     <ProjectReference Include="..\ChyveClient\ChyveClient.csproj" />
     <ProjectReference Include="..\Persistence\Persistence.csproj" />
     <ProjectReference Include="..\SchedulerCore\SchedulerCore.csproj" />
+    <ProjectReference Include="..\..\Infrastructure\Security\Security.csproj" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
