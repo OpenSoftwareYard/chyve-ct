@@ -22,7 +22,7 @@ jobs:
     - name: Build
       run: |
         dotnet build --configuration Release Chyve-ct.sln
-        dotnet publish -c Release -r linux-x64 --no-build --self-contained true /p:UseAppHost=true Chyve-ct.sln
+        dotnet publish -c Release -r linux-x64 --self-contained true /p:UseAppHost=true Chyve-ct.sln
     - name: Package
       run: |
         tar czf chyve-ct.tar.gz Apps/Scheduler/bin/Release/net9.0/linux-x64/publish Apps/WebAPI/bin/Release/net9.0/linux-x64/publish BuildingBlocks/ApiGateway/bin/Release/net9.0/linux-x64/publish
