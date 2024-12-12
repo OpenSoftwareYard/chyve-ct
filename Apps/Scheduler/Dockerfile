@@ -11,7 +11,6 @@ FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Apps/Scheduler/Scheduler.csproj", "Apps/Scheduler/"]
-COPY ["BuildingBlocks/EventBus/EventBus.csproj", "BuildingBlocks/EventBus/"]
 RUN dotnet restore "./Apps/Scheduler/Scheduler.csproj"
 COPY . .
 WORKDIR "/src/Apps/Scheduler"
