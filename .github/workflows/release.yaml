@@ -19,11 +19,9 @@ jobs:
       uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 9.0.x
-    - name: Install dependencies
-      run: dotnet restore Chyve-ct.sln
     - name: Build
       run: |
-        dotnet build --configuration Release --no-restore Chyve-ct.sln
+        dotnet build --configuration Release Chyve-ct.sln
         dotnet publish -c Release -r linux-x64 --no-build --self-contained true /p:UseAppHost=true Chyve-ct.sln
     - name: Package
       run: |
