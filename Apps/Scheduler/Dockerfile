@@ -12,7 +12,6 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Apps/Scheduler/Scheduler.csproj", "Apps/Scheduler/"]
 COPY ["BuildingBlocks/EventBus/EventBus.csproj", "BuildingBlocks/EventBus/"]
-COPY ["Domain/Events/Events.csproj", "Domain/Events/"]
 RUN dotnet restore "./Apps/Scheduler/Scheduler.csproj"
 COPY . .
 WORKDIR "/src/Apps/Scheduler"
