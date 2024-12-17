@@ -12,6 +12,8 @@ public record class ZoneDTO
     public int RamGB { get; set; }
     public int DiskGB { get; set; }
     public Guid? NodeId { get; set; }
+    public Uri? ImageUri { get; set;}
+    public required string Brand { get; set; }
     public Guid OrganizationId { get; set; }
     [JsonConverter(typeof(JsonStringEnumConverter))]
     public ZoneStatus Status { get; set; }
@@ -23,6 +25,5 @@ public record class ZoneDTO
     public string? VNic { get; set; }
     [JsonIgnore]
     public string? IPType { get; set; }
-    [JsonIgnore]
-    public string? Brand { get; set; }
+    public required List<Service> ZoneServices { get; set;}
 }

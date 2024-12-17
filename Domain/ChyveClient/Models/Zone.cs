@@ -20,10 +20,10 @@ public record CappedMemory
 public record Net
 {
     [JsonPropertyName("allowed-address")]
-    public required string AllowedAddress { get; set; }
+    public string? AllowedAddress { get; set; }
 
     [JsonPropertyName("defrouter")]
-    public required string DefRouter { get; set; }
+    public string? DefRouter { get; set; }
 
     [JsonPropertyName("physical")]
     public required string Physical { get; set; }

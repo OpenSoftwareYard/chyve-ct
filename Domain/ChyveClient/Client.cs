@@ -41,6 +41,7 @@ public class Client(string encryptionKey, string projectPath)
             zones.Add(new ZoneDTO()
             {
                 Name = zone.Name,
+                Brand = zone.Brand,
                 CpuCount = (int)(zone.CappedCpu?.Ncpus ?? 0),
                 DiskGB = 4,
                 Id = parsedZoneId,
@@ -48,6 +49,7 @@ public class Client(string encryptionKey, string projectPath)
                 OrganizationId = Guid.Empty,
                 RamGB = int.Parse(zone.CappedMemory?.Physical.Trim('G') ?? "0"),
                 Status = ZoneStatus.SCHEDULED,
+                ZoneServices = [],
             });
         }
 
@@ -125,7 +127,7 @@ public class Client(string encryptionKey, string projectPath)
         return vnicName;
     }
 
-    public async Task<Zone> CreateZone(NodeDTO node, Zone zone)
+    public async Task<Zone> CreateZone(NodeDTO node, Zone zone, Uri imageUri)
     {
         var key = await node.DecryptConnectionKey(EncryptionKey);
         var zoneJson = JsonSerializer.Serialize(zone);
@@ -150,8 +152,9 @@ public class Client(string encryptionKey, string projectPath)
 
         createZoneScript = createZoneScript
             .Replace("$1", zone.Brand)
-            .Replace("$2", zone.Name)
-            .Replace("$3", remotePath)
+            .Replace("$2", imageUri.ToString())
+            .Replace("$3", zone.Name)
+            .Replace("$4", remotePath)
             .ReplaceLineEndings("\n");
 
         using var cmd = client.RunCommand(createZoneScript);

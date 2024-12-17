@@ -17,6 +17,11 @@ namespace Services
 
         public async Task<AllocateZoneResponse> AllocateZoneToOptimalNode(ZoneDTO zone)
         {
+            if (zone.ImageUri == null)
+            {
+                throw new ArgumentException("Zone needs to have an image Uri");
+            }
+
             await _repository.BeginTransaction();
             try
             {
@@ -49,7 +54,7 @@ namespace Services
                 var createdVnic = await _chyveClient.CreateVnic(selectedNode, vnic);
 
                 var zonePath = $"{selectedNode.ZoneBasePath}/{zone.Id}";
-                var brand = "pkgsrc";
+                var brand = zone.Brand;
                 var ipType = "exclusive";
 
                 var zoneToCreate = new ChyveClient.Models.Zone
@@ -85,7 +90,7 @@ namespace Services
                     Resolvers = ["1.1.1.1", "1.0.0.1"],
                 };
 
-                _ = await _chyveClient.CreateZone(selectedNode, zoneToCreate);
+                _ = await _chyveClient.CreateZone(selectedNode, zoneToCreate, zone.ImageUri);
 
                 await _repository.CommitTransaction();
                 return new AllocateZoneResponse

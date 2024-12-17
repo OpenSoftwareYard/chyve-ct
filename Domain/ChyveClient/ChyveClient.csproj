@@ -31,6 +31,9 @@
     <None Update="Scripts\GetZone.sh">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Templates\systemd-unit.service">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>

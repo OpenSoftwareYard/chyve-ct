@@ -25,11 +25,12 @@ namespace WebAPI.Controllers
 
             if (userType == "org")
             {
+                // TODO: I don't know about this... Maybe we should check if the org token is for the same org we're creating?
                 orgs = [await _organizationService.GetById(Guid.Parse(userId!))];
             }
             else
             {
-                orgs = (await _organizationService.GetAll()).Where(o => o.UserIds.Contains(userId!)).ToList();
+                orgs = (await _organizationService.GetAll()).Where(o => o.UserIds.Contains(userId!) && o.Id == request.OrganizationId).ToList();
             }
 
             if (orgs.Count == 0)
@@ -53,6 +54,7 @@ namespace WebAPI.Controllers
 
             if (userType == "org")
             {
+                // TODO: I don't know about this... Maybe we should check if the org token is for the same org we're revoking?
                 orgs = [await _organizationService.GetById(Guid.Parse(userId!))];
             }
             else

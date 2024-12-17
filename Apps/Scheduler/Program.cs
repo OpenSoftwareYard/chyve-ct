@@ -38,7 +38,7 @@ IHost host = Host.CreateDefaultBuilder(args)
         services.AddScoped<IZoneRepository, ZoneRepository>();
         services.AddScoped<INodeRepository, NodeRepository>();
         services.AddScoped<INodeService, NodeService>();
-        services.AddScoped<IZoneService, ZoneService>();
+        services.AddScoped<IZoneService, Services.ZoneService>();
         services.AddScoped<PlaceZoneHandler>();
 
         services.AddAutoMapper(typeof(MappingProfile));

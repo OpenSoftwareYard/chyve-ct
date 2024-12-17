@@ -2,4 +2,4 @@
 
 set -x
 
-pfexec zadm create -b "$1" "$2" < $3
+pfexec zadm create -b "$1" -i "$2" "$3" < $4
