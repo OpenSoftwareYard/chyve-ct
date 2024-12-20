@@ -4,7 +4,7 @@ namespace ChyveClient;
 
 public class SystemdConfigGenerator(string projectPath) : IServiceConfigGenerator
 {
-    public async Task<string> GenerateConfig(ZoneService service)
+    public async Task<string> GenerateConfig(Service service)
     {
         using var reader = new StreamReader($"{projectPath}/Templates/systemd-unit.service");
         var systemdUnit = await reader.ReadToEndAsync();

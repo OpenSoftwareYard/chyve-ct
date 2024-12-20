@@ -36,6 +36,9 @@ public class ChyveContext : DbContext
             .Property(e => e.CreatedAt)
             .HasDefaultValueSql("now()");
 
+        modelBuilder.Entity<Zone>()
+            .OwnsMany(z => z.Services);
+
         modelBuilder.Entity<Organization>()
             .Property(e => e.CreatedAt)
             .HasDefaultValueSql("now()");

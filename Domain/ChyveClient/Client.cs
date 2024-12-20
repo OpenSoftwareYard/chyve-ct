@@ -127,7 +127,7 @@ public class Client(string encryptionKey, string projectPath)
         return vnicName;
     }
 
-    public async Task<Zone> CreateZone(NodeDTO node, Zone zone, Uri imageUri)
+    public async Task<Zone> CreateZone<G>(NodeDTO node, Zone zone, Uri imageUri, G generator, Service service) where G : IServiceConfigGenerator
     {
         var key = await node.DecryptConnectionKey(EncryptionKey);
         var zoneJson = JsonSerializer.Serialize(zone);
@@ -135,12 +135,18 @@ public class Client(string encryptionKey, string projectPath)
         var remotePath = $"/tmp/{zone.Name}.json";
         var source = new CancellationTokenSource();
 
+        var serviceConfig = await generator.GenerateConfig(service);
+        var serviceConfigPath = $"/tmp/{zone.Name}.service";
+
         using (SftpClient sftpClient = NewClient<SftpClient>(node.Address, node.Port, node.ConnectionUser!, key))
         {
             await sftpClient.ConnectAsync(source.Token);
 
             await using var remoteFile = sftpClient.AppendText(remotePath);
             await remoteFile.WriteAsync(zoneJson);
+
+            await using var remoteServiceFile = sftpClient.AppendText(serviceConfigPath);
+            await remoteServiceFile.WriteAsync(serviceConfig);
         }
 
         using SshClient client = NewClient<SshClient>(node.Address, node.Port, node.ConnectionUser!, key);
@@ -155,11 +161,16 @@ public class Client(string encryptionKey, string projectPath)
             .Replace("$2", imageUri.ToString())
             .Replace("$3", zone.Name)
             .Replace("$4", remotePath)
+            .Replace("$5", $"{zone.Path}/root/etc/resolv.conf")
+            .Replace("$6", serviceConfigPath)
+            .Replace("$7", $"{zone.Path}/root/etc/systemd/system/{service.Name}.service")
             .ReplaceLineEndings("\n");
 
         using var cmd = client.RunCommand(createZoneScript);
         Console.WriteLine(cmd.Result);
         Console.WriteLine(cmd.Error);
+
+        // TODO: Systemd enable service
 
         return zone;
     }
